@@ -1,0 +1,74 @@
+# Formateo en el json de reorno
+'''
+data = Blog.objects.filter(id = id).get()
+            return JsonResponse({"data": {"id": data.id, "nombre": data.nombre, "slug": data.slug, 
+                                          "descripcion": data.descripcion, "fecha": DateFormat(data.fecha).format('d/m/Y'), 
+                                          "categoria_id": data.categoria_id, "categoria": data.categoria.nombre, 
+                                          "imagen": f"{os.getenv("BASE_URL")}uploads/blogs/{data.foto}", 
+                                          "documento": f"{os.getenv("BASE_URL")}uploads/blogs/{data.documento}"}}, 
+                                          status = HTTPStatus.CREATED)
+'''
+
+# Views de la app blogs en caso de que el documento tenga que ser obligatorio
+'''
+        # Generar url del documento
+        try:
+            documento = f"{datetime.timestamp(datetime.now())}{os.path.splitext(str(request.FILES['documento']))[1]}"
+        except Exception as e:
+            return JsonResponse({"estado": "error", "mensaje": "Debe de adjuntar un documento en el campo documento."}, 
+                                status = HTTPStatus.BAD_REQUEST)
+        
+        # Subir documento
+        try:
+            fs.save(f"blogs/{documento}", request.FILES['documento'])
+            #fs.url(request.FILES['documento'])
+            fs.url(f"blogs/{documento}")  
+        except:
+            return JsonResponse({"estado": "error", "mensaje": "Debe de adjuntar un documento en el campo documento."}, 
+                                status = HTTPStatus.BAD_REQUEST)
+        '''
+
+# Serializers de la app blogs
+        '''
+    # Formateo del documento
+    def get_documento(self, obj):
+        return f"{os.getenv("BASE_URL")}uploads/blogs/{obj.documento}"
+    '''
+# Clase3 de la app seguridad
+'''
+def post(self, request):
+        
+        # Validaciones
+        if request.data.get("correo") == None or not request.data.get("correo"):
+            return JsonResponse({"estado": "error", "mensaje": "El campo correo es obligatorio."}, 
+                                status = HTTPStatus.BAD_REQUEST)
+        if request.data.get("password") == None or not request.data.get("password"):
+            return JsonResponse({"estado": "error", "mensaje": "El campo password es obligatorio."}, 
+                                status = HTTPStatus.BAD_REQUEST)
+        
+        # Correo
+        try:
+            user = User.objects.filter(email = request.data["correo"]).get()
+
+        except User.DoesNotExist:
+            return JsonResponse({"estado": "error", "mensaje": "Las credenciales ingresadas no son validas."}, 
+                                status = HTTPStatus.NOT_FOUND)
+        
+        # Password
+        auth = authenticate(request, username = request.data.get("correo"), password = request.data.get("password"))
+
+        if auth is not None:
+            pass
+        else:
+            return JsonResponse({"estado": "error", "mensaje": "Las credenciales ingresadas no son validas."}, 
+                                status = HTTPStatus.BAD_REQUEST)
+'''
+
+'''
+yo@neasakapendragon.com 
+123456
+'''
+'''
+.\entorno\Scripts\activate
+'''
+

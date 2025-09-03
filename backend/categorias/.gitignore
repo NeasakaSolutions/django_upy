@@ -1,0 +1,6 @@
+/entorno
+.env
+__init__.py
+__pycache__
+*pyc
+db.sqlite3

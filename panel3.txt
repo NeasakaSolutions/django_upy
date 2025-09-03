@@ -1,0 +1,362 @@
+<script setup>
+import Header from '@/components/Header.vue'
+import Fondo from '@/components/Fondo.vue';
+import Fotter from '@/components/Fotter.vue';
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import { useAuthStore } from '@/stores/authStore';
+import { onMounted, ref } from 'vue';
+import { blogsSchema } from '@/schemas/validacionesSchema';
+
+let store = useAuthStore();
+
+let datos = ref([]);
+let categorias = ref([]);
+
+onMounted(async()=>{
+  let respuesta = await fetch(`${import.meta.env.VITE_API_URL}blogs-panel/${localStorage.getItem("blogs_flaites_id")}`, {
+    headers: {"content-type": "application/json", "Authorization": `Bearer ${localStorage.getItem("blogs_flaites_token")}`}
+  });
+  datos.value = await respuesta.json();
+
+  let respuesta2 = await fetch(`${import.meta.env.VITE_API_URL}categorias`, {
+    headers: {"content-type": "application/json"}
+  });
+  categorias.value = await respuesta2.json();
+
+});
+
+// Formulario
+let nombre = ref('');
+let descripcion = ref('');
+let categoria_id = ref('0');
+let boton = ref('block');
+let preloader = ref('none');
+
+
+let enviar=()=> {
+  boton.value="none";
+  preloader.value="block";
+  if(modal_titulo.value=="Crear"){
+    let file = document.querySelector("input[type=file]").files[0];
+    console.log(file);
+  }
+  if(modal_titulo.value=="Editar"){
+    //
+  }
+};
+
+
+// Modal
+let modal_titulo = ref('');
+let crear =()=> {
+  modal_titulo.value = 'Crear';
+  categoria_id.value="0";
+  nombre.value='';
+  descripcion.value='';
+};
+
+</script>
+
+<template>
+  <Header></Header>
+  <Fondo></Fondo>
+
+  <div class="container my-5 d-flex flex-wrap gap-4">
+    <!-- Contenedor principal -->
+    <div class="contenedor_blog_articulos flex-grow-1">
+      <div class="img_art"></div>
+      <h5 class="titulos my-3">Panel de Blogs</h5>
+
+      <!-- Botón para abrir modal -->
+      <div class="mb-3">
+        <a href="#modal2" @click="crear()" class="btn btn-warning">
+          Crear / Editar Blog
+        </a>
+      </div>
+
+      <div class="cards_container3">
+        <!-- Tabla simulada -->
+        <div class="card_item3">
+          <table class="table table-bordered table-hover table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Categoría</th>
+                <th>Nombre</th>
+                <th>Detalle</th>
+                <th>Foto</th>
+                <th>Documento</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for = "(dato, index) in datos.data" :key = "index">
+                <td>{{ dato.id }}</td>
+                <td>{{ dato.categoria }}</td>
+                <td>{{ dato.nombre }}</td>
+                <td>{{ dato.descripcion }}</td>
+                <td class = "text-center">
+                  <a href = "">
+                    <img :src = "dato.imagen" :alt = "dato.nombre" style = "width: 100px;"></img>
+                  </a>
+                </td>
+                <td class="text-center">
+                  <a v-if="dato.documento" :href="dato.documento" target="_blank">
+                    Ver documento
+                  </a>
+                  <span v-else>No disponible</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal simulado -->
+      <div class="modalmask" id="modal2">
+        <div class="modalbox rotate">
+          <a href="#close" title="Cerrar" class="close">X</a>
+          <h2>{{ modal_titulo }}</h2>
+
+          <Form :validation-schema="blogsSchema" @submit="enviar">
+            <div class="contact-form-area">
+              <div class="row container">
+
+                <div class="col-12">
+                  <ErrorMessage name = "categoria_id" class ="text text-warning"/>
+                  
+                  <Field as = "select" name = "categoria_id" v-model = "categoria_id" class = "form-control" 
+                    style = "height: calc(2.25rem + 10px);">
+                    <option value = "0">Selecciones...</option>
+                    <option v-for = "(categoria, i) in categorias.data" :key = "i" :value = "categoria_id"> {{ categoria.nombre }}</option>
+                  </Field>
+  
+                </div>
+
+                <div class="col-12">
+                  <ErrorMessage name = "nombre" class ="text text-warning"/>
+                  <Field name = "nombre" type = "text" v-model = "nombre" placeholder = "Nombre" class = "form-control">
+                  </Field>
+                </div>
+
+                <div class="col-12">
+                  <ErrorMessage name = "descripcion" class ="text text-warning"/>
+                  <Field name = "descripcion" as = "textarea" v-model = "descripcion" placeholder = "Descripcion" class = "form-control">
+                  </Field>
+                </div>
+
+                <div class="col-12">
+                  <label for="file_foto" class="form-label fw-bold">Subir Foto:</label>
+                    <input type="file" ref="file" class="form-control">
+                    <!--
+                    <input type="file" name="foto" id="file" class="form-control">
+                    -->
+                </div>
+
+                <!--
+                <div class="col-12">
+                  <label for="file_documento" class="form-label fw-bold">Subir Documento:</label>
+                    <input type="file" name="documento" id="file_documento" class="form-control" accept=".pdf,.doc,.docx">
+                </div>
+                -->
+
+                <div class="col d-flex justify-content-center" v-if="boton == 'block'">
+                  <button type="submit" class="btn btn-warning btn_enviar color_btn_enviar">
+                    <p class="subtitulos mb-0">Enviar</p>
+                  </button>
+                </div>
+
+                <div class="col d-flex justify-content-center" v-if="preloader == 'block'">
+                  <img src="/img/img/load.gif" />
+                </div>
+
+              </div>
+            </div>
+          </Form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menú lateral -->
+    <div class="contenedor_blog_menu">
+      <ul class="mini_menu_config">
+        <li class="logo">
+          <router-link to="/" title="Home" class="navbar-brand">
+            <img alt="Logotipo" src="/img/core-img/favicon.ico" style="max-width: 35px; margin: 5px;" />
+          </router-link>
+        </li>
+        <li v-if="store.authId == null">
+          <router-link :to="{ name: 'login' }">Iniciar sesión</router-link>
+        </li>
+        <li v-else>
+          <router-link :to="{ name: 'panel' }">Panel</router-link>
+        </li>
+        <li><router-link :to="{ name: 'blogs' }">Inicio</router-link></li>
+        <li><router-link :to="{ name: 'BlogsGeneral' }">Blogs</router-link></li>
+        <li><router-link :to="{ name: 'contacto' }">Contacto</router-link></li>
+      </ul>
+    </div>
+  </div>
+
+  <Fotter></Fotter>
+</template>
+
+<style scoped>
+/* Imagen principal editable */
+.img_art {
+  background-image: url('/img/blog-img/carousel_2.jpeg');
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+/* Cards y tabla */
+.cards_container3 {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card_item3 {
+  background-color: #7b3fbf;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  padding: 10px;
+  color: white;
+}
+
+.card_item3:hover {
+  transform: translateY(-5px);
+}
+
+/* Menú lateral */
+.contenedor_blog_menu {
+  width: 200px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+  margin-left: auto;
+}
+
+.mini_menu_config {
+  list-style: none;
+  padding: 0;
+  text-align: center;
+}
+
+.mini_menu_config li {
+  margin: 10px 0;
+  font-weight: bold;
+  color: white;
+}
+
+.mini_menu_config li.logo {
+  margin-bottom: 20px;
+}
+
+.mini_menu_config li a {
+  text-decoration: none;
+  color: white;
+}
+
+.mini_menu_config li:hover {
+  background-color: white;
+}
+
+.mini_menu_config li:hover a,
+.mini_menu_config li:hover {
+  color: black;
+}
+
+.mini_menu_config li,
+.mini_menu_config li a {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Modal */
+.modalmask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 99999;
+  opacity: 0;
+  transition: opacity 400ms ease-in;
+  pointer-events: none;
+}
+
+/* Separación entre campos del formulario */
+.contact-form-area .col-12 {
+  margin-bottom: 15px;
+}
+
+.contact-form-area textarea.form-control {
+  min-height: 100px;
+  resize: none; /* Evita que el usuario lo expanda o reduzca */
+}
+
+.modalmask:target {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modalbox {
+  width: 600px;
+  position: relative;
+  padding: 20px; /* antes era 5px 20px 13px 20px */
+  background: #fff;
+  border-radius: 8px;
+}
+
+.rotate {
+  margin: 1% auto;
+  transform: scale(-5, -5);
+}
+
+.modalmask:target .rotate {
+  transform: rotate(360deg) scale(1, 1);
+}
+
+.close {
+  background: #606061;
+  color: #fff;
+  line-height: 25px;
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  width: 24px;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 3px;
+}
+
+.close:hover {
+  background: #FAAC58;
+  color: #222;
+}
+
+/* Responsivo */
+@media (max-width: 992px) {
+  .contenedor_blog_menu {
+    position: relative;
+    width: 100%;
+    margin-left: 0;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .img_art {
+    height: 150px;
+  }
+}
+</style>

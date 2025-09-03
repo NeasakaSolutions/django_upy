@@ -1,0 +1,4 @@
+se modifico el styles.css en public del fronted porque no se utiliza, en caso de fallas pues regresar a .css
+
+
+Se calcula aproximadamente 9 apps mas para la edicion de las portadas

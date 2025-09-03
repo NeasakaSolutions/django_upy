@@ -1,0 +1,731 @@
+/*GENERAL*/
+.contenedor {
+    padding-top: 56px;
+    margin-bottom: 0px;
+}
+
+.contenedor_videos {
+    border: 1px solid #0a0a0a;
+    margin: auto;
+    padding: 0;
+    width: 90%;
+    max-width: 900px;
+    background-color: rgba(196, 210, 228, 0.623);
+    overflow: hidden;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+/* Configuracion de los fondos */
+.fondo_color {
+    background-color: #f2f2f2;
+}
+
+
+.fondo_animado {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/img/Gif/fondo_numeros.gif');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.9; /* Ajusta la transparencia del fondo */
+  z-index: -1;  /* Envía al fondo */
+}
+
+/*
+.fondo_animado_videos {
+    margin: 0;
+    padding: 0;
+    background-image: url(/img/Gif/fondo_numeros.gif);
+    background-size:  cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+*/
+
+.fondo_animado_videos {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;   /* ancho total de la ventana */
+  height: 100vh;  /* alto total de la ventana */
+  background-image: url('/img/Gif/fondo_numeros.gif');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.9;     /* si quieres transparencia */
+  z-index: -1;      /* queda atrás de todo */
+}
+
+.contenido_videos {
+  position: relative;  /* para que esté sobre el fondo */
+  z-index: 1;
+  padding-top: 90px;   /* si quieres margen para el header */
+}
+
+/* Configuracion de los titulos */
+.titulos {
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 35px;
+    color: #fff;
+}
+
+.title_video {
+    font-size: 25px;
+    font-family: 'Times New Roman', Times, serif;
+    color: black;
+    padding-top: 10px;
+}
+
+.subtitulos {
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 20px;
+    color: #fff;
+}
+
+.texto_formulario {
+    color: #fff;
+}
+
+.text_video {
+    font-size: 18px;
+    font-family: 'Times New Roman', Times, serif;
+    color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* Extras */
+.footer_container {
+    margin: 0;
+}
+
+/* Configuracion de la linea <hr> */
+.estilo_hr {
+    border-width: 3px;
+}
+
+/* Configuraciones para las cards */
+.bg_color_1 {
+    background-color: #7B3FBF;
+}
+
+.bg_color_2 {
+    background-color: #FFD700;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* CONFIGURACION DEL CARRUSEL DE FOTOS */
+.carousel_img {
+    border-radius: 20px;
+}
+
+.degradado {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(rgba(106, 13, 173, 0.2), rgba(0,0,0,0.15));
+    pointer-events: none;
+    border-radius: 20px;
+}
+
+@media (max-width: 768px) {
+    .carousel_img {
+        max-height: 250px;
+        object-fit: cover;
+    }
+}
+
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* EDICION DE LOS LOGOS*/
+/* Edicion de los botones que contienen el logo */
+.btn_logo {
+    height: 100px;
+    width: 184px;
+    border-radius: 10px;
+}
+
+/* Configuracion del logo*/
+.svg_colab {
+    max-height: 30px;
+}
+
+/* Configuracion de los botones */
+.color_btn {
+    background-color: #7B3FBF;
+}
+
+.color_btn:hover {
+    background-color: #7b3fbf00;
+}
+
+.color_btn_2 {
+    background-color: #FFD700;
+}
+
+.color_btn_2:hover {
+    background-color: #ffd90000;
+}
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*EDICIONES EXTRAS DE LAS CARDS*/
+.card_radius {
+    border-radius: 20px;
+}
+
+/* Borde de las imagenes */
+.card_img {
+    border-top-left-radius: 20px; 
+    border-top-right-radius: 20px;
+    height: 250px;
+}
+
+/*Textos de las cards*/
+.card_title {
+    text-align: center;
+}
+
+.card_text {
+    text-align: justify;
+}
+
+@media (max-width: 767.98px) {
+    .small-card {
+        padding: 0.5rem;
+    }
+
+    .small-card .card-title {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .small-card img {
+        max-height: 150px;
+        object-fit: cover;
+    }
+}
+
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* Configuracion del formulario */
+.btn_enviar {
+    width: 200px; 
+    margin-left: auto;
+    border-color: #7B3FBF;
+}
+
+.color_btn_enviar {
+    background-color: #7B3FBF;
+}
+
+.area_mensaje {
+    resize: none;
+    max-height: 150px; /* Máximo alto permitido */
+    max-width: 100%;   /* No se pasa del ancho del contenedor */
+    height: 150px;     /* Altura inicial */
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* Configuracion de los paneles de los videos */
+.pad_left {
+    padding-left: 20px;
+}
+
+.pad_bottom {
+    padding-bottom: 0px;
+}
+
+.config_shorts {
+    border-radius: 20px; 
+    padding: 0;
+    margin: 0;
+}
+
+.config_videos {
+    border-radius: 20px;
+    padding: auto;
+    margin: 20px;
+}
+
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* Configuracion de la seccion de redes sociales */
+
+.btn_redes {
+    height: 25px;
+    width: 60px;
+    max-height: 50px;
+    align-items: center;
+}
+
+.color_btn_redes {
+    background-color: #7B3FBF;
+}
+
+.color_btn_redes:hover {
+    background-color: #7b3fbf00;
+}
+
+.text_redes {
+    color: #fff;
+    font-size: 20px;
+    font-family: 'Times New Roman', Times, serif;
+    margin: 5px;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*EDICIONES EXTRAS DE LAS CARDS DE LOS PROFESORES*/
+.card_profesor {
+    max-width: 200px;
+    width: 100%;
+    height: 100%;
+}
+
+.card_radius {
+    border-radius: 20px;
+}
+
+.card_img_profesor {
+    border-top-left-radius: 20px; 
+    border-top-right-radius: 20px;
+    height: 150px;
+    width: 100%;
+    object-fit: cover;
+}
+
+
+/*Textos de las cards*/
+.card_title_profesor {
+    text-align: center;
+    font-size: 18px;
+}
+
+.card_subtitle_profesor {
+    text-align: center;
+    font-size: 16px;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* Contenedor general flex para blog, con altura limitada para no afectar otros contenedores */
+.blog-layout {
+  display: flex;
+  gap: 20px;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  max-height: auto; /* limita la altura máxima para que no se extienda más allá 80vh*/
+  overflow: hidden; /* evita scroll externo */
+  box-sizing: border-box;
+}
+
+/* Contenedor artículos */
+.contenedor_blog_articulos {
+  flex: 1;
+  background-color: #7b3fbfc9;
+  border: 2px solid #0a0a0a;
+  border-radius: 10px;
+  padding: 20px;
+  min-width: 0; /* para evitar overflow horizontal */
+  box-sizing: border-box;
+  overflow-y: auto; /* scroll solo dentro del contenido si es necesario */
+  max-height: auto; /* limita altura para scroll 80vh*/
+}
+
+
+.img_art {
+  background-image: url('/img/blog-img/carousel_2.jpeg');
+  background-size: cover;
+  border-radius: 10px;
+  min-height: 300px;
+  border: 2px solid #f2f2f2;
+}
+
+/* Aplica padding top a todo lo que está debajo del header */
+.contenedor_principal,  /* o la clase del div principal que engloba todo */
+.container,             /* si usas Bootstrap o similar */
+body > div:not(header) { /* cualquier div que no sea header */
+  padding-top: 56px;
+  box-sizing: border-box;
+}
+
+/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.fondo_animado_videos {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;   /* ancho total de la ventana */
+  height: 100vh;  /* alto total de la ventana */
+  background-image: url('/img/Gif/fondo_numeros.gif');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.9;     /* si quieres transparencia */
+  z-index: -1;      /* queda atrás de todo */
+}
+
+.contenido_videos {
+  position: relative;  /* para que esté sobre el fondo */
+  z-index: 1;
+  padding-top: 90px;   /* si quieres margen para el header */
+}
+
+.contenedor_videos {
+    border: 1px solid #0a0a0a;
+    margin: auto;
+    padding: 0;
+    width: 90%;
+    max-width: 900px;
+    background-color: rgba(196, 210, 228, 0.623);
+    overflow: hidden;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.title_video {
+    font-size: 25px;
+    font-family: 'Times New Roman', Times, serif;
+    color: black;
+    padding-top: 10px;
+}
+
+.text_video {
+    font-size: 18px;
+    font-family: 'Times New Roman', Times, serif;
+    color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/* Menú contenedor */
+.contenedor_blog_menu {
+  flex: 0 0 250px;          /* ancho fijo */
+  background-color: #ffd900c9;
+  border: 2px solid #0a0a0a;
+  padding: 15px;
+  border-radius: 12px;
+  box-sizing: border-box;
+
+  position: sticky;         /* se pega al hacer scroll */
+  top: 80px;
+
+  height: fit-content;      /* se adapta al contenido */
+  margin-left: auto;        /* se alinea a la derecha */
+}
+
+/* Lista menú */
+.mini_menu_config {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  text-align: center;       /* centra los elementos */
+}
+
+/* Logo */
+.mini_menu_config .logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Items menú */
+.mini_menu_config li {
+  background-color: rgba(123, 63, 191, 0.9);
+  color: white;
+  margin: 6px 0;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+/* Links del menú */
+.mini_menu_config li a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* Hover efecto */
+.mini_menu_config li:hover {
+  background-color: #fff;
+  color: #7b3fbf;
+  transform: translateX(5px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .blog-layout {
+    flex-direction: column;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .contenedor_blog_articulos,
+  .contenedor_blog_menu {
+    flex: 1 1 100%;
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+    position: relative;
+  }
+}
+
+/*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*PORTADAS*/
+.img_art {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+
+/* Cards */
+.cards_container3 {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card_item3 {
+  background-color: #7b3fbf;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.card_item3:hover {
+  transform: translateY(-5px);
+}
+
+.card_link3 {
+  text-decoration: none;
+  color: white;
+  display: block;
+  padding: 10px;
+}
+
+.card_image3 {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+.card_title3 {
+  margin-top: 10px;
+  font-weight: bold;
+  color: white;
+}
+
+@media (max-width: 576px) {
+  .img_art {
+    height: 150px;
+  }
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*------------------------------------------*/
+/* CONTENEDOR PRINCIPAL BLOG DETALLE */
+/*------------------------------------------*/
+.detalle_blog_articulos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/*------------------------------------------*/
+/* IMAGEN DEL BLOG COMO FONDO (igual portada) */
+/*------------------------------------------*/
+.img_blog_wrapper {
+  width: 100%;
+  height: 400px; /* ajustable según diseño */
+  border-radius: 10px;
+  border: 2px solid #f2f2f2;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Si quieres sombra */
+.img_blog_wrapper {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/*------------------------------------------*/
+/* INFORMACION GENERAL DEL BLOG */
+/*------------------------------------------*/
+.info_blog p,
+.descripcion_blog p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0.7rem 0;
+  color: #f0f0f0;
+}
+
+.info_blog span,
+.descripcion_blog span {
+  font-weight: 600;
+  color: #ffeb3b;
+}
+
+.descripcion_blog p.descripcion {
+  background-color: rgba(255,255,255,0.1);
+  padding: 8px 12px;
+  border-radius: 5px;
+}
+
+/*------------------------------------------*/
+/* ESTILO DE ENLACES DEL PDF */
+/*------------------------------------------*/
+.descripcion_blog a {
+  color: #81d4fa;
+  text-decoration: none;
+}
+
+.descripcion_blog a:hover {
+  color: #4fc3f7;
+  text-decoration: underline;
+}
+
+/*------------------------------------------*/
+/* RESPONSIVE BLOG DETALLE */
+/*------------------------------------------*/
+@media (max-width: 576px) {
+  .img_blog_wrapper {
+    height: 250px;
+  }
+}
+
+.table th, 
+.table td {
+  vertical-align: middle;
+}
+
+.table-responsive {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+.form-panel {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+/* Separación entre campos sin tocar la estructura */
+.form-panel .col-12,
+.form-panel .col-lg-12 {
+  margin-bottom: 12px;
+}
+
+/* Inputs discretos */
+.form-panel .form-control {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Enfoque sutil */
+.form-panel .form-control:focus {
+  border-color: #f0ad4e;
+  box-shadow: 0 0 0 0.2rem rgba(240, 173, 78, 0.25);
+}
+
+/* Quita el margin extra del último bloque (botones/preloader) */
+.form-panel .col-12:last-child {
+  margin-bottom: 0;
+}
+
+/*
+
+.contenedor_blog_menu {
+  flex: 0 0 250px;
+  background-color: #ffd900c9;
+  border: 2px solid #0a0a0a;
+  padding: 15px;
+  border-radius: 12px;
+  box-sizing: border-box;
+  max-height: 80vh; 
+  overflow-y: auto;
+}
+
+
+.mini_menu_config {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+
+.mini_menu_config .logo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.mini_menu_config li {
+  background-color: rgba(123, 63, 191, 0.9);
+  color: white;
+  margin: 6px 0;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.mini_menu_config li a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.mini_menu_config li:hover {
+  background-color: #fff;
+  color: #7b3fbf;
+  transform: translateX(5px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+@media (max-width: 768px) {
+  .blog-layout {
+    flex-direction: column;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .contenedor_blog_articulos,
+  .contenedor_blog_menu {
+    flex: 1 1 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .contenedor_blog_menu {
+    margin-top: 20px;
+  }
+}
+*/
+
+
