@@ -15,6 +15,12 @@ let store = useAuthStore();
 onMounted(async() => {
   // Portadas
   portada.value = await getPortadaById(5)
+
+  let respuesta = await fetch(`${import.meta.env.VITE_API_URL}docentes`, {
+    headers: {'content-type': 'application/json'}
+  });
+  const datosJSON = await respuesta.json();
+  datos.value = datosJSON.data;
 });
 
 let route = useRoute();
@@ -93,9 +99,109 @@ let enviar = async () => {
             </div>
           </Form>
         </div>
+
+        
+
+          <div class="d-flex align-items-center gap-3 my-5">
+            <div class="col-3">
+                <div class="text-right my-5">
+                    <a href="#modal2" @click="crear()" class="btn btn-outline-warning text-nowrap">
+                        <i class="fas fa-plus"></i> Crear Docente
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-2">
+                <div class="text-right my-5">
+                  <a class="btn btn-outline-warning">
+                      <router-link :to = "{name: 'panel'}" class="nav-link">Blogs</router-link>
+                  </a>
+                </div>
+            </div>
+
+          </div>
+
+        
+
+        <hr />
+
+        <!--Configuracion de la tabla-->
+        <div class="col-12">
+          <div class="table-respopnsive">
+            <table class="table table-bordered table-striped table-hover aling-middle text-center">
+
+              <thead class="table-warning">
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Area</th>
+                  <th>Foto</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr v-for="(dato, index) in datos" :key="index">
+                  <td>{{  dato.id }}</td>
+                  <td>{{  dato.nombre }}</td>
+                  <td>{{  dato.area }}</td>
+                  <td class="text-center">
+                    <a :href="dato.imagen" class="lightbox d-block" data-fancybox="image-gallery">
+                      <img :src="dato.imagen" :alt="dato.nombre" style="width: 100px;"></img>
+                    </a>
+                  </td>
+      
+                <td class="text-center">
+                  <!--AQUI VAN LOS BOTONES DE FONT AWESOME-->
+                  <router-link :to="{name: 'panel_editar_foto', params:{id:dato.id}}" title="Editar foto">
+                    <i class="fa-solid fa-image"></i>
+                  </router-link>
+                  &nbsp;&nbsp;
+                  <a href="#modal2" title="Editar" @click="editar(dato)">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  &nbsp;&nbsp;
+                  <router-link to="#" @click.navigate="eliminar(dato.id)" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                  </router-link>
+                  &nbsp;&nbsp;
+                </td>
+                </tr>
+              </tbody>
+
+            </table>
+          </div>
+        </div>
+
       </div>
+
     </div>
-</div>
+
+
+    <!-- Menú lateral -->
+    <div class="contenedor_blog_menu">
+      <ul class="mini_menu_config">
+        <li class="logo">
+          <router-link to="/" title="Home" class="navbar-brand">
+            <img alt="Logotipo" src="/img/core-img/favicon.ico" class="logo_img" />
+          </router-link>
+        </li>
+        <li v-if="store.authId == null">
+          <router-link :to="{ name: 'login' }">Iniciar sesión</router-link>
+        </li>
+        <li v-else>
+          <router-link :to="{ name: 'panel' }">Panel</router-link>
+        </li>
+        <li><router-link :to="{ name: 'blogs' }">Inicio</router-link></li>
+        <li><router-link :to="{ name: 'BlogsGeneral' }">Blogs</router-link></li>
+        <li><router-link :to="{ name: 'contacto' }">Contacto</router-link></li>
+      </ul>
+    </div>
+  </div>
+  
+  
+
+
 <Fotter></Fotter>
 </template>
 
