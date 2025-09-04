@@ -20,15 +20,18 @@ let docente_id = ref(0);
 let boton = ref('block');
 let preloader = ref('none');
 let imagen_preview = ref(''); // Variable para la vista previa de la imagen
-let modal_abierto = ref(false); // Nuevo estado para controlar la visibilidad del modal
 
 // Estado reactivo para portadas (sin cambios)
 let portada = ref(null);
 let store = useAuthStore();
 const ID_PORTADA = 5;
 
-// Función para cargar los datos de los docentes desde la API
-const cargarDocentes = async () => {
+// Carga de datos al montar el componente
+onMounted(async () => {
+    // Portadas (sin cambios)
+    portada.value = await getPortadaById(ID_PORTADA);
+
+    // Docentes: Se ajusta la URL para coincidir con el `urls.py` de Django
     try {
         let respuesta = await fetch(`${import.meta.env.VITE_API_URL}docentes`);
         const datosJSON = await respuesta.json();
@@ -36,12 +39,6 @@ const cargarDocentes = async () => {
     } catch (error) {
         console.error("Error al cargar los docentes:", error);
     }
-};
-
-// Carga de datos al montar el componente
-onMounted(async () => {
-    portada.value = await getPortadaById(ID_PORTADA);
-    cargarDocentes(); // Llama a la nueva función para cargar docentes
 });
 
 // Lógica para editar la portada (sin cambios)
@@ -78,11 +75,6 @@ let enviar = async () => {
 
 // --- LÓGICA CRUD DE DOCENTES ---
 
-// Función para cerrar el modal
-const cerrarModal = () => {
-    modal_abierto.value = false;
-};
-
 // Función para manejar el envío del formulario de creación y edición
 const enviarDocente = async () => {
     boton.value = 'none';
@@ -100,6 +92,7 @@ const enviarDocente = async () => {
 
     if (modal_titulo.value === 'Crear Docente') {
         try {
+            // URL ajustada para coincidir con el `urls.py` de Django
             await axios.post(`${import.meta.env.VITE_API_URL}docentes`, formData, {
                 headers: { 
                     'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`,
@@ -107,13 +100,13 @@ const enviarDocente = async () => {
                 }
             });
             alert("Se creó el docente exitosamente.");
-            cerrarModal(); // Cierra el modal
-            cargarDocentes(); // Recarga los datos
+            window.location.reload();
         } catch (err) {
             alert("Ocurrió un error al crear el docente: " + err);
         }
     } else if (modal_titulo.value === 'Editar Docente') {
         try {
+            // URL ajustada para coincidir con 'docentes/<int:id>'
             await axios.put(`${import.meta.env.VITE_API_URL}docentes/${docente_id.value}`, formData, {
                 headers: { 
                     'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`,
@@ -121,8 +114,7 @@ const enviarDocente = async () => {
                 }
             });
             alert("Se modificó el docente exitosamente.");
-            cerrarModal(); // Cierra el modal
-            cargarDocentes(); // Recarga los datos
+            window.location.reload();
         } catch (err) {
             alert("Ocurrió un error al editar el docente: " + err);
         }
@@ -138,7 +130,6 @@ const crear = () => {
     nombre.value = '';
     area.value = '';
     imagen_preview.value = '';
-    modal_abierto.value = true; // Abre el modal
 };
 
 // Función para abrir el modal en modo 'Editar' y rellenar los datos
@@ -148,7 +139,6 @@ const editar = (docente) => {
     nombre.value = docente.nombre;
     area.value = docente.area;
     imagen_preview.value = docente.imagen;
-    modal_abierto.value = true; // Abre el modal
 };
 
 // Función para manejar el cambio de archivo y mostrar la vista previa
@@ -167,11 +157,12 @@ const handleFileChange = (event) => {
 const eliminar = async (id) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar este docente?")) {
         try {
+            // URL ajustada para coincidir con 'docentes/<int:id>'
             await axios.delete(`${import.meta.env.VITE_API_URL}docentes/${id}`, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}` }
             });
             alert("Se eliminó el docente exitosamente.");
-            cargarDocentes(); // Recarga los datos sin refrescar la página
+            window.location.reload();
         } catch (err) {
             alert("Ocurrió un error al eliminar el docente: " + err);
         }
@@ -216,7 +207,7 @@ const eliminar = async (id) => {
         <div class="d-flex align-items-center gap-3 my-5">
             <div class="col-3">
                 <div class="text-right my-5">
-                    <a @click.prevent="crear()" class="btn btn-outline-warning text-nowrap">
+                    <a href="#modal2" @click="crear()" class="btn btn-outline-warning text-nowrap">
                         <i class="fas fa-plus"></i> Crear Docente
                     </a>
                 </div>
@@ -256,7 +247,7 @@ const eliminar = async (id) => {
                                 </a>
                             </td>
                             <td class="text-center">
-                                <a @click.prevent="editar(dato)" title="Editar">
+                                <a href="#modal2" title="Editar" @click="editar(dato)">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 &nbsp;&nbsp;
@@ -295,9 +286,9 @@ const eliminar = async (id) => {
 <Fotter></Fotter>
 
 <!-- Modal de Docentes -->
-<div class="modalmask" v-if="modal_abierto">
+<div class="modalmask" id="modal2">
     <div class="modalbox rotate">
-        <a @click.prevent="cerrarModal()" title="Cerrar" class="close">X</a>
+        <a href="#close" title="Cerrar" class="close">X</a>
         <h2>{{ modal_titulo }}</h2>
 
         <Form @submit="enviarDocente()">
@@ -355,10 +346,14 @@ const eliminar = async (id) => {
     left: 0;
     background: rgba(0, 0, 0, 0.8);
     z-index: 99999;
-    opacity: 1;
+    opacity: 0;
     -webkit-transition: opacity 400ms ease-in;
     -moz-transition: opacity 400ms ease-in;
     transition: opacity 400ms ease-in;
+    pointer-events: none;
+}
+.modalmask:target {
+    opacity: 1;
     pointer-events: auto;
 }
 .modalbox {
@@ -370,11 +365,18 @@ const eliminar = async (id) => {
     -webkit-transition: all 500ms ease-in;
     -moz-transition: all 500ms ease-in;
     transition: all 500ms ease-in;
-    max-height: 90vh;
-    overflow-y: auto;
-    margin: 1% auto;
+    max-height: 90vh; /* Limita la altura del modal */
+    overflow-y: auto; /* Agrega scroll si el contenido es muy largo */
 }
-
+.rotate {
+    margin: 1% auto;
+    -webkit-transform: scale(-5, -5);
+    transform: scale(-5, -5);
+}
+.modalmask:target .rotate {
+    transform: rotate(360deg) scale(1, 1);
+    -webkit-transform: rotate(360deg) scale(1, 1);
+}
 .close {
     background: #606061;
     color: #FFFFFF;
