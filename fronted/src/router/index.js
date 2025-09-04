@@ -14,6 +14,7 @@ import Panel from '@/views/Panel.vue'
 import { useAuthStore } from '@/stores/authStore'
 import PanelEditarFoto from '@/views/PanelEditarFoto.vue'
 import PanelEditarDocumento from '@/views/PanelEditarDocumento.vue'
+import PanelDocentes from '@/views/PanelDocentes.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -77,6 +78,14 @@ const router = createRouter({
       path: '/panel/editar/documento/:id',
       component: PanelEditarDocumento,
       name: 'panel_editar_documento',
+      meta: {
+        secure: true
+      }
+    },
+    {
+      path: '/docentes',
+      component: PanelDocentes,
+      name: 'panelDocentes',
       meta: {
         secure: true
       }

@@ -267,8 +267,8 @@ const eliminarCategoria = async (id) => {
           
           <div class="col-2">
               <div class="text-right my-5">
-                  <a href="#" class="btn btn-outline-warning">
-                       Docentes
+                  <a href="#" class="btn btn-outline-warning"> 
+                       <router-link :to = "{name: 'panelDocentes'}" class="nav-link">Docentes</router-link>
                   </a>
               </div>
           </div>
