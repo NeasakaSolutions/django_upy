@@ -9,6 +9,7 @@ import { blogsSchema } from '@/schemas/validacionesSchema';
 import axios from 'axios';
 import { Fancybox } from '@fancyapps/ui'
 import "@fancyapps/ui/dist/fancybox.css"
+import { categoriasSchema } from '@/schemas/categoriasSchema';
 
 // Validaciones de superusuario para el menu lateral
 let store =useAuthStore();
@@ -108,6 +109,82 @@ const eliminar=(id)=>{
   }
 };
 
+const categoria_id_modal = ref(0);
+const nombre_categoria = ref('');
+const modal_titulo_categoria = ref('');
+const boton_categoria = ref('block');
+const preloader_categoria = ref('none');
+
+// Variables para la lista de categorías en el modal
+let listaCategorias = ref([]);
+const mostrarListaCategorias = ref(false); // Nueva variable para controlar la vista del modal
+
+// Función para abrir el modal de categorías
+const crearCategoria = async () => {
+    modal_titulo_categoria.value = 'Crear Categoría';
+    nombre_categoria.value = '';
+    mostrarListaCategorias.value = false; // Oculta la lista al crear una nueva
+};
+
+// Función para abrir el modal con la lista de categorías
+const abrirModalCategorias = async () => {
+    modal_titulo_categoria.value = 'Gestión de Categorías';
+    mostrarListaCategorias.value = true; // Muestra la lista
+    // Obtener las categorías de la API
+    try {
+        const respuesta = await axios.get(`${import.meta.env.VITE_API_URL}categorias`);
+        listaCategorias.value = respuesta.data.data;
+    } catch (error) {
+        alert("Ocurrió un error al cargar las categorías.");
+    }
+};
+
+const editarCategoria = (modelo) => {
+    modal_titulo_categoria.value = 'Editar Categoría';
+    categoria_id_modal.value = modelo.id;
+    nombre_categoria.value = modelo.nombre;
+    mostrarListaCategorias.value = false; // Oculta la lista para mostrar el formulario de edición
+};
+
+const enviarCategoria = async () => {
+    boton_categoria.value = "none";
+    preloader_categoria.value = "block";
+
+    if (modal_titulo_categoria.value === "Crear Categoría") {
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}categorias`, { nombre: nombre_categoria.value });
+            alert("Se creó la categoría exitosamente");
+            window.location = "/panel";
+        } catch (err) {
+            alert("Ocurrió un error inesperado al crear la categoría: " + err);
+            window.location = "/panel";
+        }
+    }
+
+    if (modal_titulo_categoria.value === "Editar Categoría") {
+        try {
+            await axios.put(`${import.meta.env.VITE_API_URL}categorias/${categoria_id_modal.value}`, { nombre: nombre_categoria.value });
+            alert("Se modificó la categoría exitosamente");
+            window.location = "/panel";
+        } catch (err) {
+            alert("Ocurrió un error inesperado al editar la categoría: " + err);
+            window.location = "/panel";
+        }
+    }
+};
+
+const eliminarCategoria = async (id) => {
+    if (window.confirm("¿Eliminar categoría?")) {
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}categorias/${id}`);
+            alert("Se eliminó la categoría exitosamente");
+            window.location = "/panel";
+        } catch (err) {
+            alert("Ocurrió un error inesperado al eliminar la categoría: " + err);
+            window.location = "/panel";
+        }
+    }
+};
 </script>
 
 <template>
@@ -121,14 +198,98 @@ const eliminar=(id)=>{
 
       <div class="row">
 
-        <!--Configuracion del boton crear-->
-        <div class=col-12>
-          <div class="text-right my-5">
-            <a href="#modal2" @click="crear()" class="btn btn-outline-warning">
-              <i class="fas fa-plus"></i>   Crear
-            </a>
+        <div class="row">
+          <div class="col-2">
+              <div class="text-right my-5">
+                  <a href="#modal2" @click="crear()" class="btn btn-outline-warning">
+                      <i class="fas fa-plus"></i> Crear
+                  </a>
+              </div>
           </div>
+
+          <div class="col-2">
+            <div class="text-right my-5">
+                <a href="#modal3" @click="abrirModalCategorias()" class="btn btn-outline-warning">
+                    Categorías
+                </a>
+            </div>
         </div>
+
+        <div class="modalmask" id="modal3">
+            <div class="modalbox rotate">
+                <a href="#close" title="Cerrar" class="close">X</a>
+                <h2>{{ modal_titulo_categoria }}</h2>
+
+                <div v-if="mostrarListaCategorias" class="modal-listado">
+                    <p>
+                        <a href="#modal3" @click="crearCategoria()" class="btn btn-outline-warning">
+                            <i class="fas fa-plus"></i> Crear nueva
+                        </a>
+                    </p>
+                    <ul class="list-group">
+                        <li v-for="(categoria, index) in listaCategorias" :key="index" class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ categoria.nombre }}
+                            <div>
+                                <a href="#modal3" title="Editar" @click="editarCategoria(categoria)" class="btn btn-sm btn-outline-primary me-2">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" @click.prevent="eliminarCategoria(categoria.id)" title="Eliminar" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div v-else>
+                    <Form :validation-schema="categoriasSchema" @submit="enviarCategoria()">
+                        <div class="form-panel">
+                            <div class="row container">
+                                <div class="col-12 col-lg-12">
+                                    <ErrorMessage name="nombre" class="text text-warning" />
+                                    <Field type="text" name="nombre" v-model="nombre_categoria" placeholder="Nombre de la categoría" class="form-control"></Field>
+                                </div>
+
+                                <div class="col-12 text-center" :style="'display:' + boton_categoria">
+                                    <button class="btn btn-outline-warning" type="submit" title="Enviar">
+                                        Enviar
+                                    </button>
+                                </div>
+                                <div class="col-12 text-center" :style="'display:' + preloader_categoria">
+                                    <img src="/img/img/load.gif" />
+                                </div>
+                            </div>
+                        </div>
+                    </Form>
+                </div>
+            </div>
+        </div>
+          
+          <div class="col-2">
+              <div class="text-right my-5">
+                  <a href="#" class="btn btn-outline-warning">
+                       Docentes
+                  </a>
+              </div>
+          </div>
+          
+          <div class="col-2">
+              <div class="text-right my-5">
+                  <a href="#" class="btn btn-outline-warning">
+                      Portadas
+                  </a>
+              </div>
+          </div>
+          
+          <div class="col-2">
+              <div class="text-right my-5">
+                  <a href="#" class="btn btn-outline-warning">
+                       Videos
+                  </a>
+              </div>
+          </div>
+      </div>
+
         <hr />
 
         <!--Configuracion de la tabla-->
@@ -284,6 +445,7 @@ const eliminar=(id)=>{
     </div>
   </div>
   <!--/modal-->
+
 
 </template>
 
