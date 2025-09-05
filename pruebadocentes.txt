@@ -1,64 +1,181 @@
 <script setup>
-import Header from '@/components/Header.vue'
+import Header from '@/components/Header.vue';
 import Fondo from '@/components/Fondo.vue';
 import Fotter from '@/components/Fotter.vue';
 import { getPortadaById } from '@/services/portadaService';
 import { Form, Field } from 'vee-validate';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
-import { onMounted ,ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import axios from 'axios';
+import { Fancybox } from '@fancyapps/ui';
+import "@fancyapps/ui/dist/fancybox.css";
 
+// Estado reactivo para docentes y la interfaz de usuario
 let datos = ref([]);
-let portada = ref(null)
-let store = useAuthStore();
-
-onMounted(async() => {
-  // Portadas
-  portada.value = await getPortadaById(5)
-
-  let respuesta = await fetch(`${import.meta.env.VITE_API_URL}docentes`, {
-    headers: {'content-type': 'application/json'}
-  });
-  const datosJSON = await respuesta.json();
-  datos.value = datosJSON.data;
-});
-
-let route = useRoute();
+let modal_titulo = ref('');
+let nombre = ref('');
+let area = ref('');
+let docente_id = ref(0);
 let boton = ref('block');
 let preloader = ref('none');
+let imagen_preview = ref(''); // Variable para la vista previa de la imagen
+let modal_abierto = ref(false); // Nuevo estado para controlar la visibilidad del modal
+
+// Estado reactivo para portadas (sin cambios)
+let portada = ref(null);
+let store = useAuthStore();
 const ID_PORTADA = 5;
 
-let enviar = async () => {
-  boton.value = "none";
-  preloader.value = "block";
-
-  let file_imagen = document.querySelector("#file_imagen").files[0];
-  let formData = new FormData();
-  formData.append('foto', file_imagen);
-  formData.append('id', ID_PORTADA); // aquí le pasas la ID fija
-
-  try {
-    let resp = await fetch(`${import.meta.env.VITE_API_URL}portadas/editar/foto`, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`
-      }
-    });
-
-    if (resp.status === 200) {
-      alert("Se modificó el registro");
-      window.location.reload();
-    } else {
-      alert("Ocurrió un error al modificar el registro");
-      boton.value = "block";
-      preloader.value = "none";
+// Función para cargar los datos de los docentes desde la API
+const cargarDocentes = async () => {
+    try {
+        let respuesta = await fetch(`${import.meta.env.VITE_API_URL}docentes`);
+        const datosJSON = await respuesta.json();
+        datos.value = datosJSON.data;
+    } catch (error) {
+        console.error("Error al cargar los docentes:", error);
     }
-  } catch (err) {
-    alert("Ocurrió un error inesperado");
-    boton.value = "block";
-    preloader.value = "none";
-  }
+};
+
+// Carga de datos al montar el componente
+onMounted(async () => {
+    portada.value = await getPortadaById(ID_PORTADA);
+    cargarDocentes(); // Llama a la nueva función para cargar docentes
+});
+
+// Lógica para editar la portada (sin cambios)
+let enviar = async () => {
+    boton.value = "none";
+    preloader.value = "block";
+    let file_imagen = document.querySelector("#file_imagen").files[0];
+    let formData = new FormData();
+    formData.append('foto', file_imagen);
+    formData.append('id', ID_PORTADA);
+
+    try {
+        let resp = await fetch(`${import.meta.env.VITE_API_URL}portadas/editar/foto`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`
+            }
+        });
+        if (resp.status === 200) {
+            alert("Se modificó el registro");
+            window.location.reload();
+        } else {
+            alert("Ocurrió un error al modificar el registro");
+            boton.value = "block";
+            preloader.value = "none";
+        }
+    } catch (err) {
+        alert("Ocurrió un error inesperado");
+        boton.value = "block";
+        preloader.value = "none";
+    }
+};
+
+// --- LÓGICA CRUD DE DOCENTES ---
+
+// Función para cerrar el modal
+const cerrarModal = () => {
+    modal_abierto.value = false;
+};
+
+// Función para manejar el envío del formulario de creación y edición
+const enviarDocente = async () => {
+    boton.value = 'none';
+    preloader.value = 'block';
+    
+    const formData = new FormData();
+    formData.append('nombre', nombre.value);
+    formData.append('area', area.value);
+
+    // Obtener la foto del campo de entrada
+    const file_foto = document.querySelector("#file_foto").files[0];
+    if (file_foto) {
+        formData.append('foto', file_foto);
+    }
+
+    if (modal_titulo.value === 'Crear Docente') {
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}docentes`, formData, {
+                headers: { 
+                    'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`,
+                    'Content-Type': 'multipart/form-data' 
+                }
+            });
+            alert("Se creó el docente exitosamente.");
+            cerrarModal(); // Cierra el modal
+            cargarDocentes(); // Recarga los datos
+        } catch (err) {
+            alert("Ocurrió un error al crear el docente: " + err);
+        }
+    } else if (modal_titulo.value === 'Editar Docente') {
+        try {
+            await axios.put(`${import.meta.env.VITE_API_URL}docentes/${docente_id.value}`, formData, {
+                headers: { 
+                    'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert("Se modificó el docente exitosamente.");
+            cerrarModal(); // Cierra el modal
+            cargarDocentes(); // Recarga los datos
+        } catch (err) {
+            alert("Ocurrió un error al editar el docente: " + err);
+        }
+    }
+
+    boton.value = 'block';
+    preloader.value = 'none';
+};
+
+// Función para abrir el modal en modo 'Crear'
+const crear = () => {
+    modal_titulo.value = 'Crear Docente';
+    nombre.value = '';
+    area.value = '';
+    imagen_preview.value = '';
+    modal_abierto.value = true; // Abre el modal
+};
+
+// Función para abrir el modal en modo 'Editar' y rellenar los datos
+const editar = (docente) => {
+    modal_titulo.value = 'Editar Docente';
+    docente_id.value = docente.id;
+    nombre.value = docente.nombre;
+    area.value = docente.area;
+    imagen_preview.value = docente.imagen;
+    modal_abierto.value = true; // Abre el modal
+};
+
+// Función para manejar el cambio de archivo y mostrar la vista previa
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            imagen_preview.value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+// Función para eliminar un docente
+const eliminar = async (id) => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar este docente?")) {
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}docentes/${id}`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}` }
+            });
+            alert("Se eliminó el docente exitosamente.");
+            cargarDocentes(); // Recarga los datos sin refrescar la página
+        } catch (err) {
+            alert("Ocurrió un error al eliminar el docente: " + err);
+        }
+    }
 };
 
 </script>
@@ -69,141 +186,210 @@ let enviar = async () => {
 <div class="container my-5 d-flex flex-wrap gap-4">
     <!-- Contenedor principal -->
     <div class="contenedor_blog_articulos flex-grow-1">
-        <!--
-      <img src="/img/blog-img/portada_blogs_2.png" alt="Imagen del blog" class="img_art" />
-        -->
-      <img v-if="portada" :src="portada.imagen" alt="Imagen del blog" class="img_art" />
+        <img v-if="portada" :src="portada.imagen" alt="Imagen del blog" class="img_art" />
 
         <!--Configuracion para editar portada-->
         <div v-if="store.authId != null" class="cards_container_form">
-        <div class="card_form3 p-4 rounded">
-
-          <Form @submit="enviar()">
-            <div class="form-panel mb-3">
-              <div class="row">
-                <div class="col-12">
-                  <label for="file_imagen" class="form-label fw-bold">Editar portada:</label>
-                  <Field name="imagen" type="file" id="file_imagen" class="form-control" />
-                </div>
-              </div>
+            <div class="card_form3 p-4 rounded">
+                <Form @submit="enviar()">
+                    <div class="form-panel mb-3">
+                        <div class="row">
+                            <div class="col-12">
+                                <label for="file_imagen" class="form-label fw-bold">Editar portada:</label>
+                                <Field name="imagen" type="file" id="file_imagen" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Botones de portada -->
+                    <div class="col-12 text-center" :style="'display:' + boton">
+                        <button class="btn btn-outline-warning" type="submit" title="Enviar">
+                            Enviar
+                        </button>
+                    </div>
+                    <div class="col-12 text-center" :style="'display:' + preloader">
+                        <img src="/img/img/load.gif" />
+                    </div>
+                </Form>
             </div>
-
-            <!--Configuracion de los botones-->
-            <div class="col-12 text-center" :style="'display:'+boton">
-                <button class="btn btn-outline-warning" type="submit" title="Enviar">
-                Enviar
-                </button>
-            </div>
-            <div class="col-12 text-center" :style="'display:'+preloader">
-                <img src="/img/img/load.gif" />
-            </div>
-          </Form>
         </div>
 
-        
-
-          <div class="d-flex align-items-center gap-3 my-5">
+        <div class="d-flex align-items-center gap-3 my-5">
             <div class="col-3">
                 <div class="text-right my-5">
-                    <a href="#modal2" @click="crear()" class="btn btn-outline-warning text-nowrap">
+                    <a @click.prevent="crear()" class="btn btn-outline-warning text-nowrap">
                         <i class="fas fa-plus"></i> Crear Docente
                     </a>
                 </div>
             </div>
-
             <div class="col-2">
                 <div class="text-right my-5">
-                  <a class="btn btn-outline-warning">
-                      <router-link :to = "{name: 'panel'}" class="nav-link">Blogs</router-link>
-                  </a>
+                    <a class="btn btn-outline-warning">
+                        <router-link :to="{ name: 'panel' }" class="nav-link">Blogs</router-link>
+                    </a>
                 </div>
             </div>
-
-          </div>
-
-        
+        </div>
 
         <hr />
 
         <!--Configuracion de la tabla-->
         <div class="col-12">
-          <div class="table-respopnsive">
-            <table class="table table-bordered table-striped table-hover aling-middle text-center">
-
-              <thead class="table-warning">
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Area</th>
-                  <th>Foto</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr v-for="(dato, index) in datos" :key="index">
-                  <td>{{  dato.id }}</td>
-                  <td>{{  dato.nombre }}</td>
-                  <td>{{  dato.area }}</td>
-                  <td class="text-center">
-                    <a :href="dato.imagen" class="lightbox d-block" data-fancybox="image-gallery">
-                      <img :src="dato.imagen" :alt="dato.nombre" style="width: 100px;"></img>
-                    </a>
-                  </td>
-      
-                <td class="text-center">
-                  <!--AQUI VAN LOS BOTONES DE FONT AWESOME-->
-                  <router-link :to="{name: 'panel_editar_foto', params:{id:dato.id}}" title="Editar foto">
-                    <i class="fa-solid fa-image"></i>
-                  </router-link>
-                  &nbsp;&nbsp;
-                  <a href="#modal2" title="Editar" @click="editar(dato)">
-                    <i class="fas fa-edit"></i>
-                  </a>
-                  &nbsp;&nbsp;
-                  <router-link to="#" @click.navigate="eliminar(dato.id)" title="Eliminar">
-                    <i class="fas fa-trash"></i>
-                  </router-link>
-                  &nbsp;&nbsp;
-                </td>
-                </tr>
-              </tbody>
-
-            </table>
-          </div>
+            <div class="table-respopnsive">
+                <table class="table table-bordered table-striped table-hover aling-middle text-center">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Area</th>
+                            <th>Foto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(dato, index) in datos" :key="index">
+                            <td>{{ dato.id }}</td>
+                            <td>{{ dato.nombre }}</td>
+                            <td>{{ dato.area }}</td>
+                            <td class="text-center">
+                                <a :href="dato.imagen" class="lightbox d-block" data-fancybox="image-gallery">
+                                    <img :src="dato.imagen" :alt="dato.nombre" style="width: 100px;">
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="#" @click.prevent="editar(dato)" class="text-primary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                &nbsp;&nbsp;
+                                <a href="#" @click.prevent="eliminar(dato.id)" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-
-      </div>
-
     </div>
-
 
     <!-- Menú lateral -->
     <div class="contenedor_blog_menu">
-      <ul class="mini_menu_config">
-        <li class="logo">
-          <router-link to="/" title="Home" class="navbar-brand">
-            <img alt="Logotipo" src="/img/core-img/favicon.ico" class="logo_img" />
-          </router-link>
-        </li>
-        <li v-if="store.authId == null">
-          <router-link :to="{ name: 'login' }">Iniciar sesión</router-link>
-        </li>
-        <li v-else>
-          <router-link :to="{ name: 'panel' }">Panel</router-link>
-        </li>
-        <li><router-link :to="{ name: 'blogs' }">Inicio</router-link></li>
-        <li><router-link :to="{ name: 'BlogsGeneral' }">Blogs</router-link></li>
-        <li><router-link :to="{ name: 'contacto' }">Contacto</router-link></li>
-      </ul>
+        <ul class="mini_menu_config">
+            <li class="logo">
+                <router-link to="/" title="Home" class="navbar-brand">
+                    <img alt="Logotipo" src="/img/core-img/favicon.ico" class="logo_img" />
+                </router-link>
+            </li>
+            <li v-if="store.authId == null">
+                <router-link :to="{ name: 'login' }">Iniciar sesión</router-link>
+            </li>
+            <li v-else>
+                <router-link :to="{ name: 'panel' }">Panel</router-link>
+            </li>
+            <li><router-link :to="{ name: 'blogs' }">Inicio</router-link></li>
+            <li><router-link :to="{ name: 'BlogsGeneral' }">Blogs</router-link></li>
+            <li><router-link :to="{ name: 'contacto' }">Contacto</router-link></li>
+        </ul>
     </div>
-  </div>
-  
-  
-
+</div>
 
 <Fotter></Fotter>
+
+<!-- Modal de Docentes -->
+<div class="modalmask" v-if="modal_abierto">
+    <div class="modalbox rotate">
+        <a @click.prevent="cerrarModal()" title="Cerrar" class="close">X</a>
+        <h2>{{ modal_titulo }}</h2>
+
+        <Form @submit="enviarDocente()">
+            <div class="form-panel">
+                <div class="row container">
+                    <!-- Campo Nombre -->
+                    <div class="col-12 col-lg-12">
+                        <label for="nombre" class="form-label fw-bold">Nombre</label>
+                        <Field type="text" name="nombre" v-model="nombre" placeholder="Nombre del docente" class="form-control" />
+                    </div>
+
+                    <!-- Campo Área -->
+                    <div class="col-12 col-lg-12">
+                        <label for="area" class="form-label fw-bold">Área</label>
+                        <Field as="textarea" name="area" v-model="area" placeholder="Área de especialización" class="form-control"></Field>
+                    </div>
+
+                    <!-- Campo y Vista Previa de la Foto -->
+                    <div class="col-12 col-lg-12 mt-3">
+                        <label for="file_foto" class="form-label fw-bold">
+                            {{ modal_titulo === 'Crear Docente' ? 'Subir foto:' : 'Cambiar foto:' }}
+                        </label>
+                        <input type="file" name="foto" id="file_foto" class="form-control" @change="handleFileChange" />
+                        <div v-if="imagen_preview" class="mt-3 text-center">
+                            <label class="form-label fw-bold">Vista previa:</label>
+                            <!-- La foto se limita a 100px de alto para que no ocupe toda la pantalla -->
+                            <img :src="imagen_preview" alt="Vista previa de la foto" class="img-fluid rounded" style="max-height: 100px; display: block; margin: 0 auto;" />
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="col-12 text-center mt-4" :style="{ display: boton }">
+                        <button class="btn btn-outline-warning" type="submit" title="Enviar">
+                            Enviar
+                        </button>
+                    </div>
+                    <div class="col-12 text-center" :style="{ display: preloader }">
+                        <img src="/img/img/load.gif" alt="Cargando" />
+                    </div>
+                </div>
+            </div>
+        </Form>
+    </div>
+</div>
 </template>
 
 <style scoped>
+/* Estilos que ya tenías para el modal, se mantienen */
+.modalmask {
+    position: fixed;
+    font-family: Arial, sans-serif;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 99999;
+    opacity: 1;
+    -webkit-transition: opacity 400ms ease-in;
+    -moz-transition: opacity 400ms ease-in;
+    transition: opacity 400ms ease-in;
+    pointer-events: auto;
+}
+.modalbox {
+    width: 600px;
+    position: relative;
+    padding: 5px 20px 13px 20px;
+    background: #fff;
+    border-radius: 3px;
+    -webkit-transition: all 500ms ease-in;
+    -moz-transition: all 500ms ease-in;
+    transition: all 500ms ease-in;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 1% auto;
+}
+
+.close {
+    background: #606061;
+    color: #FFFFFF;
+    line-height: 25px;
+    position: absolute;
+    right: 1px;
+    text-align: center;
+    top: 1px;
+    width: 24px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 3px;
+}
+.close:hover {
+    background: #FAAC58;
+    color: #222;
+}
 </style>

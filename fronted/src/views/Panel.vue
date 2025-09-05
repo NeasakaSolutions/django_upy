@@ -230,7 +230,7 @@ const eliminarCategoria = async (id) => {
                         <li v-for="(categoria, index) in listaCategorias" :key="index" class="list-group-item d-flex justify-content-between align-items-center">
                             {{ categoria.nombre }}
                             <div>
-                                <a href="#modal3" title="Editar" @click="editarCategoria(categoria)" class="btn btn-sm btn-outline-primary me-2">
+                                <a href="#modal3" title="Editar" @click="editarCategoria(categoria)" class="btn btn-sm btn-outline-warning me-2">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <a href="#" @click.prevent="eliminarCategoria(categoria.id)" title="Eliminar" class="btn btn-sm btn-outline-danger">
@@ -328,19 +328,19 @@ const eliminarCategoria = async (id) => {
                 </td>
                 <td class="text-center">
                   <!--AQUI VAN LOS BOTONES DE FONT AWESOME-->
-                  <router-link :to="{name: 'panel_editar_foto', params:{id:dato.id}}" title="Editar foto">
+                  <router-link :to="{name: 'panel_editar_foto', params:{id:dato.id}}" title="Editar foto" class="text-warning">
                     <i class="fa-solid fa-image"></i>
                   </router-link>
                   &nbsp;&nbsp;
-                  <router-link :to="{name: 'panel_editar_documento', params:{id:dato.id}}" title="Editar documento">
+                  <router-link :to="{name: 'panel_editar_documento', params:{id:dato.id}}" title="Editar documento" class="text-warning">
                     <i class="fa-solid fa-file"></i>
                   </router-link>
                   &nbsp;&nbsp;
-                  <a href="#modal2" title="Editar" @click="editar(dato)">
+                  <a href="#modal2" title="Editar" @click="editar(dato)" class="text-warning">
                     <i class="fas fa-edit"></i>
                   </a>
                   &nbsp;&nbsp;
-                  <router-link to="#" @click.navigate="eliminar(dato.id)" title="Eliminar">
+                  <router-link to="#" @click.navigate="eliminar(dato.id)" title="Eliminar" class="text-danger">
                     <i class="fas fa-trash"></i>
                   </router-link>
                   &nbsp;&nbsp;

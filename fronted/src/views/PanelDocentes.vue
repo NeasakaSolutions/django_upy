@@ -22,6 +22,15 @@ let preloader = ref('none');
 let imagen_preview = ref(''); // Variable para la vista previa de la imagen
 let modal_abierto = ref(false); // Nuevo estado para controlar la visibilidad del modal
 
+// Estado reactivo para la nueva tabla de laboratorios
+let laboratorios = ref([]);
+let lab_nombre = ref('');
+let lab_descripcion = ref('');
+let lab_id = ref(0);
+let lab_imagen_preview = ref('');
+let lab_modal_abierto = ref(false);
+let lab_modal_titulo = ref('');
+
 // Estado reactivo para portadas (sin cambios)
 let portada = ref(null);
 let store = useAuthStore();
@@ -38,52 +47,11 @@ const cargarDocentes = async () => {
     }
 };
 
-// Carga de datos al montar el componente
-onMounted(async () => {
-    portada.value = await getPortadaById(ID_PORTADA);
-    cargarDocentes(); // Llama a la nueva función para cargar docentes
-});
-
-// Lógica para editar la portada (sin cambios)
-let enviar = async () => {
-    boton.value = "none";
-    preloader.value = "block";
-    let file_imagen = document.querySelector("#file_imagen").files[0];
-    let formData = new FormData();
-    formData.append('foto', file_imagen);
-    formData.append('id', ID_PORTADA);
-
-    try {
-        let resp = await fetch(`${import.meta.env.VITE_API_URL}portadas/editar/foto`, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`
-            }
-        });
-        if (resp.status === 200) {
-            alert("Se modificó el registro");
-            window.location.reload();
-        } else {
-            alert("Ocurrió un error al modificar el registro");
-            boton.value = "block";
-            preloader.value = "none";
-        }
-    } catch (err) {
-        alert("Ocurrió un error inesperado");
-        boton.value = "block";
-        preloader.value = "none";
-    }
-};
-
-// --- LÓGICA CRUD DE DOCENTES ---
-
-// Función para cerrar el modal
+// --- LÓGICA CRUD DE DOCENTES (SIN CAMBIOS) ---
 const cerrarModal = () => {
     modal_abierto.value = false;
 };
 
-// Función para manejar el envío del formulario de creación y edición
 const enviarDocente = async () => {
     boton.value = 'none';
     preloader.value = 'block';
@@ -91,8 +59,6 @@ const enviarDocente = async () => {
     const formData = new FormData();
     formData.append('nombre', nombre.value);
     formData.append('area', area.value);
-
-    // Obtener la foto del campo de entrada
     const file_foto = document.querySelector("#file_foto").files[0];
     if (file_foto) {
         formData.append('foto', file_foto);
@@ -107,8 +73,8 @@ const enviarDocente = async () => {
                 }
             });
             alert("Se creó el docente exitosamente.");
-            cerrarModal(); // Cierra el modal
-            cargarDocentes(); // Recarga los datos
+            cerrarModal();
+            cargarDocentes();
         } catch (err) {
             alert("Ocurrió un error al crear el docente: " + err);
         }
@@ -121,8 +87,8 @@ const enviarDocente = async () => {
                 }
             });
             alert("Se modificó el docente exitosamente.");
-            cerrarModal(); // Cierra el modal
-            cargarDocentes(); // Recarga los datos
+            cerrarModal();
+            cargarDocentes();
         } catch (err) {
             alert("Ocurrió un error al editar el docente: " + err);
         }
@@ -132,26 +98,23 @@ const enviarDocente = async () => {
     preloader.value = 'none';
 };
 
-// Función para abrir el modal en modo 'Crear'
 const crear = () => {
     modal_titulo.value = 'Crear Docente';
     nombre.value = '';
     area.value = '';
     imagen_preview.value = '';
-    modal_abierto.value = true; // Abre el modal
+    modal_abierto.value = true;
 };
 
-// Función para abrir el modal en modo 'Editar' y rellenar los datos
 const editar = (docente) => {
     modal_titulo.value = 'Editar Docente';
     docente_id.value = docente.id;
     nombre.value = docente.nombre;
     area.value = docente.area;
     imagen_preview.value = docente.imagen;
-    modal_abierto.value = true; // Abre el modal
+    modal_abierto.value = true;
 };
 
-// Función para manejar el cambio de archivo y mostrar la vista previa
 const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -163,7 +126,6 @@ const handleFileChange = (event) => {
     }
 };
 
-// Función para eliminar un docente
 const eliminar = async (id) => {
     if (window.confirm("¿Estás seguro de que quieres eliminar este docente?")) {
         try {
@@ -171,24 +133,142 @@ const eliminar = async (id) => {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}` }
             });
             alert("Se eliminó el docente exitosamente.");
-            cargarDocentes(); // Recarga los datos sin refrescar la página
+            cargarDocentes();
         } catch (err) {
             alert("Ocurrió un error al eliminar el docente: " + err);
         }
     }
 };
 
+// --- LÓGICA CRUD DE LABORATORIOS ---
+const cargarLaboratorios = async () => {
+    try {
+        let respuesta = await fetch(`${import.meta.env.VITE_API_URL}laboratorios`);
+        const datosJSON = await respuesta.json();
+
+        // Mapea los datos para construir la URL completa de la imagen
+        laboratorios.value = datosJSON.data.map(lab => {
+            return {
+                ...lab, // Copia todas las propiedades del objeto original
+                // Crea la ruta completa combinando la base de la URL de la API
+                // con el nombre del archivo de la foto.
+                foto_full_url: `${import.meta.env.VITE_API_URL}laboratorios/${lab.foto}`
+            };
+        });
+
+    } catch (error) {
+        console.error("Error al cargar los laboratorios:", error);
+    }
+};
+
+const crearLab = () => {
+    lab_modal_titulo.value = 'Crear Laboratorio';
+    lab_nombre.value = '';
+    lab_descripcion.value = '';
+    lab_imagen_preview.value = '';
+    lab_modal_abierto.value = true;
+};
+
+const editarLab = (laboratorio) => {
+    lab_modal_titulo.value = 'Editar Laboratorio';
+    lab_id.value = laboratorio.id;
+    lab_nombre.value = laboratorio.nombre;
+    lab_descripcion.value = laboratorio.descripcion;
+    // Esta línea es clave: la preview ya tiene la URL de la imagen existente
+    lab_imagen_preview.value = laboratorio.foto; 
+    lab_modal_abierto.value = true;
+};
+
+const enviarLaboratorio = async () => {
+    boton.value = 'none';
+    preloader.value = 'block';
+
+    const formData = new FormData();
+    formData.append('nombre', lab_nombre.value);
+    formData.append('descripcion', lab_descripcion.value);
+    const file_foto = document.querySelector("#file_lab_foto").files[0];
+    if (file_foto) {
+        formData.append('foto', file_foto);
+    }
+
+    if (lab_modal_titulo.value === 'Crear Laboratorio') {
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}laboratorios`, formData, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert("Se creó el laboratorio exitosamente.");
+            cerrarLabModal();
+            cargarLaboratorios();
+        } catch (err) {
+            alert("Ocurrió un error al crear el laboratorio: " + err);
+        }
+    } else if (lab_modal_titulo.value === 'Editar Laboratorio') {
+        try {
+            await axios.put(`${import.meta.env.VITE_API_URL}laboratorios/${lab_id.value}`, formData, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert("Se modificó el laboratorio exitosamente.");
+            cerrarLabModal();
+            cargarLaboratorios();
+        } catch (err) {
+            alert("Ocurrió un error al editar el laboratorio: " + err);
+        }
+    }
+
+    boton.value = 'block';
+    preloader.value = 'none';
+};
+
+const eliminarLab = async (id) => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar este laboratorio?")) {
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}laboratorios/${id}`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}` }
+            });
+            alert("Se eliminó el laboratorio exitosamente.");
+            cargarLaboratorios();
+        } catch (err) {
+            alert("Ocurrió un error al eliminar el laboratorio: " + err);
+        }
+    }
+};
+
+const cerrarLabModal = () => {
+    lab_modal_abierto.value = false;
+};
+
+const handleLabFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            lab_imagen_preview.value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+// Carga de datos al montar el componente
+onMounted(async () => {
+    portada.value = await getPortadaById(ID_PORTADA);
+    cargarDocentes();
+    cargarLaboratorios();
+});
 </script>
 
 <template>
 <Header></Header>
 <Fondo></Fondo>
 <div class="container my-5 d-flex flex-wrap gap-4">
-    <!-- Contenedor principal -->
     <div class="contenedor_blog_articulos flex-grow-1">
         <img v-if="portada" :src="portada.imagen" alt="Imagen del blog" class="img_art" />
 
-        <!--Configuracion para editar portada-->
         <div v-if="store.authId != null" class="cards_container_form">
             <div class="card_form3 p-4 rounded">
                 <Form @submit="enviar()">
@@ -200,7 +280,6 @@ const eliminar = async (id) => {
                             </div>
                         </div>
                     </div>
-                    <!-- Botones de portada -->
                     <div class="col-12 text-center" :style="'display:' + boton">
                         <button class="btn btn-outline-warning" type="submit" title="Enviar">
                             Enviar
@@ -221,6 +300,13 @@ const eliminar = async (id) => {
                     </a>
                 </div>
             </div>
+             <div class="col-3">
+                <div class="text-right my-5">
+                    <a @click.prevent="crearLab()" class="btn btn-outline-warning text-nowrap">
+                        <i class="fas fa-plus"></i> Crear Laboratorio
+                    </a>
+                </div>
+            </div>
             <div class="col-2">
                 <div class="text-right my-5">
                     <a class="btn btn-outline-warning">
@@ -232,15 +318,15 @@ const eliminar = async (id) => {
 
         <hr />
 
-        <!--Configuracion de la tabla-->
         <div class="col-12">
-            <div class="table-respopnsive">
-                <table class="table table-bordered table-striped table-hover aling-middle text-center">
+            <h3>Gestión de Docentes</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover align-middle text-center">
                     <thead class="table-warning">
                         <tr>
                             <th>ID</th>
                             <th>Nombre</th>
-                            <th>Area</th>
+                            <th>Área</th>
                             <th>Foto</th>
                             <th>Acciones</th>
                         </tr>
@@ -256,11 +342,51 @@ const eliminar = async (id) => {
                                 </a>
                             </td>
                             <td class="text-center">
-                                <a @click.prevent="editar(dato)" title="Editar">
+                                <a @click.prevent="editar(dato)" title="Editar" class="text-warning">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 &nbsp;&nbsp;
-                                <a href="#" @click.prevent="eliminar(dato.id)" title="Eliminar">
+                                <a href="#" @click.prevent="eliminar(dato.id)" title="Eliminar" class="text-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <hr />
+
+        <div class="col-12">
+            <h3>Gestión de Laboratorios</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover align-middle text-center">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Foto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(lab, index) in laboratorios" :key="index">
+                            <td>{{ lab.id }}</td>
+                            <td>{{ lab.nombre }}</td>
+                            <td>{{ lab.descripcion }}</td>
+                            <td class="text-center">
+                                <a :href="lab.imagen" class="lightbox d-block" data-fancybox="lab-image-gallery">
+                                    <img :src="lab.imagen" :alt="lab.nombre" style="width: 100px;">
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a @click.prevent="editarLab(lab)" title="Editar" class="text-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                &nbsp;&nbsp;
+                                <a href="#" @click.prevent="eliminarLab(lab.id)" title="Eliminar" class="text-danger">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </td>
@@ -271,7 +397,6 @@ const eliminar = async (id) => {
         </div>
     </div>
 
-    <!-- Menú lateral -->
     <div class="contenedor_blog_menu">
         <ul class="mini_menu_config">
             <li class="logo">
@@ -294,28 +419,21 @@ const eliminar = async (id) => {
 
 <Fotter></Fotter>
 
-<!-- Modal de Docentes -->
 <div class="modalmask" v-if="modal_abierto">
     <div class="modalbox rotate">
         <a @click.prevent="cerrarModal()" title="Cerrar" class="close">X</a>
         <h2>{{ modal_titulo }}</h2>
-
         <Form @submit="enviarDocente()">
             <div class="form-panel">
                 <div class="row container">
-                    <!-- Campo Nombre -->
                     <div class="col-12 col-lg-12">
                         <label for="nombre" class="form-label fw-bold">Nombre</label>
                         <Field type="text" name="nombre" v-model="nombre" placeholder="Nombre del docente" class="form-control" />
                     </div>
-
-                    <!-- Campo Área -->
                     <div class="col-12 col-lg-12">
                         <label for="area" class="form-label fw-bold">Área</label>
                         <Field as="textarea" name="area" v-model="area" placeholder="Área de especialización" class="form-control"></Field>
                     </div>
-
-                    <!-- Campo y Vista Previa de la Foto -->
                     <div class="col-12 col-lg-12 mt-3">
                         <label for="file_foto" class="form-label fw-bold">
                             {{ modal_titulo === 'Crear Docente' ? 'Subir foto:' : 'Cambiar foto:' }}
@@ -323,12 +441,48 @@ const eliminar = async (id) => {
                         <input type="file" name="foto" id="file_foto" class="form-control" @change="handleFileChange" />
                         <div v-if="imagen_preview" class="mt-3 text-center">
                             <label class="form-label fw-bold">Vista previa:</label>
-                            <!-- La foto se limita a 100px de alto para que no ocupe toda la pantalla -->
                             <img :src="imagen_preview" alt="Vista previa de la foto" class="img-fluid rounded" style="max-height: 100px; display: block; margin: 0 auto;" />
                         </div>
                     </div>
+                    <div class="col-12 text-center mt-4" :style="{ display: boton }">
+                        <button class="btn btn-outline-warning" type="submit" title="Enviar">
+                            Enviar
+                        </button>
+                    </div>
+                    <div class="col-12 text-center" :style="{ display: preloader }">
+                        <img src="/img/img/load.gif" alt="Cargando" />
+                    </div>
+                </div>
+            </div>
+        </Form>
+    </div>
+</div>
 
-                    <!-- Botones -->
+<div class="modalmask" v-if="lab_modal_abierto">
+    <div class="modalbox rotate">
+        <a @click.prevent="cerrarLabModal()" title="Cerrar" class="close">X</a>
+        <h2>{{ lab_modal_titulo }}</h2>
+        <Form @submit="enviarLaboratorio()">
+            <div class="form-panel">
+                <div class="row container">
+                    <div class="col-12 col-lg-12">
+                        <label for="lab_nombre" class="form-label fw-bold">Nombre</label>
+                        <Field type="text" name="lab_nombre" v-model="lab_nombre" placeholder="Nombre del laboratorio" class="form-control" />
+                    </div>
+                    <div class="col-12 col-lg-12">
+                        <label for="lab_descripcion" class="form-label fw-bold">Descripción</label>
+                        <Field as="textarea" name="lab_descripcion" v-model="lab_descripcion" placeholder="Descripción del laboratorio" class="form-control"></Field>
+                    </div>
+                    <div class="col-12 col-lg-12 mt-3">
+                        <label for="file_lab_foto" class="form-label fw-bold">
+                            {{ lab_modal_titulo === 'Crear Laboratorio' ? 'Subir foto:' : 'Cambiar foto:' }}
+                        </label>
+                        <input type="file" name="foto" id="file_lab_foto" class="form-control" @change="handleLabFileChange" />
+                        <div v-if="lab_imagen_preview" class="mt-3 text-center">
+                            <label class="form-label fw-bold">Vista previa:</label>
+                            <img :src="lab_imagen_preview" alt="Vista previa de la foto" class="img-fluid rounded" style="max-height: 100px; display: block; margin: 0 auto;" />
+                        </div>
+                    </div>
                     <div class="col-12 text-center mt-4" :style="{ display: boton }">
                         <button class="btn btn-outline-warning" type="submit" title="Enviar">
                             Enviar
