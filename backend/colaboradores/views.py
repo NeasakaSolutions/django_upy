@@ -133,7 +133,7 @@ class Clase2(APIView):
             Colaborador.objects.filter(id = id).update(**datos_para_actualizar)
 
             return JsonResponse({"estado": "ok", "mensaje": "Se modifico el registro exitosamente"}, 
-                                status = HTTPStatus.NOT_FOUND)
+                                status = HTTPStatus.OK)
         
         except Exception as e:
 

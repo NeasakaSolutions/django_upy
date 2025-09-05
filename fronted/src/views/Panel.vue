@@ -193,7 +193,7 @@ const eliminarCategoria = async (id) => {
 
   <div class="container my-5 d-flex flex-wrap gap-4">
     <div class="contenedor_blog_articulos flex-grow-1">
-      <img src="/img/blog-img/portada_blogs_2.png" alt="Imagen del blog" class="img_art" />
+      
       <h5 class="titulos my-3">Panel</h5>
 
       <div class="row">
@@ -268,7 +268,7 @@ const eliminarCategoria = async (id) => {
           <div class="col-2">
               <div class="text-right my-5">
                   <a href="#" class="btn btn-outline-warning"> 
-                       <router-link :to = "{name: 'panelDocentes'}" class="nav-link">Docentes</router-link>
+                       <router-link :to = "{name: 'panelDocentes'}" class="nav-link">Principal</router-link>
                   </a>
               </div>
           </div>

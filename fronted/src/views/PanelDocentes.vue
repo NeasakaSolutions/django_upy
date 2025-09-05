@@ -31,6 +31,14 @@ let lab_imagen_preview = ref('');
 let lab_modal_abierto = ref(false);
 let lab_modal_titulo = ref('');
 
+// --- NUEVO ESTADO PARA COLABORADORES ---
+let colaboradores = ref([]);
+let col_nombre = ref('');
+let col_id = ref(0);
+let col_imagen_preview = ref('');
+let col_modal_abierto = ref(false);
+let col_modal_titulo = ref('');
+
 // Estado reactivo para portadas (sin cambios)
 let portada = ref(null);
 let store = useAuthStore();
@@ -55,7 +63,7 @@ const cerrarModal = () => {
 const enviarDocente = async () => {
     boton.value = 'none';
     preloader.value = 'block';
-    
+
     const formData = new FormData();
     formData.append('nombre', nombre.value);
     formData.append('area', area.value);
@@ -67,9 +75,9 @@ const enviarDocente = async () => {
     if (modal_titulo.value === 'Crear Docente') {
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}docentes`, formData, {
-                headers: { 
+                headers: {
                     'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`,
-                    'Content-Type': 'multipart/form-data' 
+                    'Content-Type': 'multipart/form-data'
                 }
             });
             alert("Se creó el docente exitosamente.");
@@ -81,7 +89,7 @@ const enviarDocente = async () => {
     } else if (modal_titulo.value === 'Editar Docente') {
         try {
             await axios.put(`${import.meta.env.VITE_API_URL}docentes/${docente_id.value}`, formData, {
-                headers: { 
+                headers: {
                     'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`,
                     'Content-Type': 'multipart/form-data'
                 }
@@ -145,17 +153,7 @@ const cargarLaboratorios = async () => {
     try {
         let respuesta = await fetch(`${import.meta.env.VITE_API_URL}laboratorios`);
         const datosJSON = await respuesta.json();
-
-        // Mapea los datos para construir la URL completa de la imagen
-        laboratorios.value = datosJSON.data.map(lab => {
-            return {
-                ...lab, // Copia todas las propiedades del objeto original
-                // Crea la ruta completa combinando la base de la URL de la API
-                // con el nombre del archivo de la foto.
-                foto_full_url: `${import.meta.env.VITE_API_URL}laboratorios/${lab.foto}`
-            };
-        });
-
+        laboratorios.value = datosJSON.data;
     } catch (error) {
         console.error("Error al cargar los laboratorios:", error);
     }
@@ -174,8 +172,7 @@ const editarLab = (laboratorio) => {
     lab_id.value = laboratorio.id;
     lab_nombre.value = laboratorio.nombre;
     lab_descripcion.value = laboratorio.descripcion;
-    // Esta línea es clave: la preview ya tiene la URL de la imagen existente
-    lab_imagen_preview.value = laboratorio.foto; 
+    lab_imagen_preview.value = laboratorio.imagen;
     lab_modal_abierto.value = true;
 };
 
@@ -254,11 +251,113 @@ const handleLabFileChange = (event) => {
     }
 };
 
+// --- NUEVA LÓGICA CRUD DE COLABORADORES ---
+const cargarColaboradores = async () => {
+    try {
+        const respuesta = await fetch(`${import.meta.env.VITE_API_URL}colaboradores`);
+        const datosJSON = await respuesta.json();
+        colaboradores.value = datosJSON.data;
+    } catch (error) {
+        console.error("Error al cargar los colaboradores:", error);
+    }
+};
+
+const crearCol = () => {
+    col_modal_titulo.value = 'Crear Colaborador';
+    col_nombre.value = '';
+    col_imagen_preview.value = '';
+    col_modal_abierto.value = true;
+};
+
+const editarCol = (colaborador) => {
+    col_modal_titulo.value = 'Editar Colaborador';
+    col_id.value = colaborador.id;
+    col_nombre.value = colaborador.nombre;
+    // Usa la propiedad "foto" que viene de la API
+    col_imagen_preview.value = colaborador.foto;
+    col_modal_abierto.value = true;
+};
+
+const enviarColaborador = async () => {
+    boton.value = 'none';
+    preloader.value = 'block';
+
+    const formData = new FormData();
+    formData.append('nombre', col_nombre.value);
+    const file_foto = document.querySelector("#file_col_foto").files[0];
+    if (file_foto) {
+        formData.append('foto', file_foto);
+    }
+
+    if (col_modal_titulo.value === 'Crear Colaborador') {
+        try {
+            await axios.post(`${import.meta.env.VITE_API_URL}colaboradores`, formData, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert("Se creó el colaborador exitosamente.");
+            cerrarColModal();
+            cargarColaboradores();
+        } catch (err) {
+            alert("Ocurrió un error al crear el colaborador: " + err);
+        }
+    } else if (col_modal_titulo.value === 'Editar Colaborador') {
+        try {
+            await axios.put(`${import.meta.env.VITE_API_URL}colaboradores/${col_id.value}`, formData, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}`,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            alert("Se modificó el colaborador exitosamente.");
+            cerrarColModal();
+            cargarColaboradores();
+        } catch (err) {
+            alert("Ocurrió un error al editar el colaborador: " + err);
+        }
+    }
+
+    boton.value = 'block';
+    preloader.value = 'none';
+};
+
+const eliminarCol = async (id) => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar este colaborador?")) {
+        try {
+            await axios.delete(`${import.meta.env.VITE_API_URL}colaboradores/${id}`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('blogs_flaites_token')}` }
+            });
+            alert("Se eliminó el colaborador exitosamente.");
+            cargarColaboradores();
+        } catch (err) {
+            alert("Ocurrió un error al eliminar el colaborador: " + err);
+        }
+    }
+};
+
+const cerrarColModal = () => {
+    col_modal_abierto.value = false;
+};
+
+const handleColFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            col_imagen_preview.value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
 // Carga de datos al montar el componente
 onMounted(async () => {
     portada.value = await getPortadaById(ID_PORTADA);
     cargarDocentes();
     cargarLaboratorios();
+    cargarColaboradores();
 });
 </script>
 
@@ -267,30 +366,8 @@ onMounted(async () => {
 <Fondo></Fondo>
 <div class="container my-5 d-flex flex-wrap gap-4">
     <div class="contenedor_blog_articulos flex-grow-1">
-        <img v-if="portada" :src="portada.imagen" alt="Imagen del blog" class="img_art" />
-
-        <div v-if="store.authId != null" class="cards_container_form">
-            <div class="card_form3 p-4 rounded">
-                <Form @submit="enviar()">
-                    <div class="form-panel mb-3">
-                        <div class="row">
-                            <div class="col-12">
-                                <label for="file_imagen" class="form-label fw-bold">Editar portada:</label>
-                                <Field name="imagen" type="file" id="file_imagen" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 text-center" :style="'display:' + boton">
-                        <button class="btn btn-outline-warning" type="submit" title="Enviar">
-                            Enviar
-                        </button>
-                    </div>
-                    <div class="col-12 text-center" :style="'display:' + preloader">
-                        <img src="/img/img/load.gif" />
-                    </div>
-                </Form>
-            </div>
-        </div>
+        
+         <h5 class="titulos my-3">Panel de la página principal</h5>
 
         <div class="d-flex align-items-center gap-3 my-5">
             <div class="col-3">
@@ -302,8 +379,8 @@ onMounted(async () => {
             </div>
              <div class="col-3">
                 <div class="text-right my-5">
-                    <a @click.prevent="crearLab()" class="btn btn-outline-warning text-nowrap">
-                        <i class="fas fa-plus"></i> Crear Laboratorio
+                    <a @click.prevent="crearCol()" class="btn btn-outline-warning text-nowrap">
+                        <i class="fas fa-plus"></i> Crear Colaborador
                     </a>
                 </div>
             </div>
@@ -342,7 +419,7 @@ onMounted(async () => {
                                 </a>
                             </td>
                             <td class="text-center">
-                                <a @click.prevent="editar(dato)" title="Editar" class="text-warning">
+                                <a href="#" @click.prevent="editar(dato)" title="Editar" class="text-warning">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 &nbsp;&nbsp;
@@ -355,11 +432,18 @@ onMounted(async () => {
                 </table>
             </div>
         </div>
-        
+
         <hr />
 
         <div class="col-12">
             <h3>Gestión de Laboratorios</h3>
+            <div class="col-3">
+                <div class="text-right my-5">
+                    <a @click.prevent="crearLab()" class="btn btn-outline-warning text-nowrap">
+                        <i class="fas fa-plus"></i> Crear Laboratorio
+                    </a>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-bordered table-striped table-hover align-middle text-center">
                     <thead class="table-warning">
@@ -382,11 +466,54 @@ onMounted(async () => {
                                 </a>
                             </td>
                             <td class="text-center">
-                                <a @click.prevent="editarLab(lab)" title="Editar" class="text-warning">
+                                <a href="#" @click.prevent="editarLab(lab)" title="Editar" class="text-warning">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 &nbsp;&nbsp;
                                 <a href="#" @click.prevent="eliminarLab(lab.id)" title="Eliminar" class="text-danger">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="col-12">
+            <h3>Gestión de Colaboradores</h3>
+            <div class="text-right my-3">
+                <a @click.prevent="crearCol()" class="btn btn-outline-warning text-nowrap">
+                    <i class="fas fa-plus"></i> Crear Colaborador
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover align-middle text-center">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Logo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(col, index) in colaboradores" :key="index">
+                            <td>{{ col.id }}</td>
+                            <td>{{ col.nombre }}</td>
+                            <td class="text-center">
+                                <a :href="col.imagen" class="lightbox d-block" data-fancybox="col-image-gallery">
+                                    <img :src="col.imagen" :alt="col.nombre" style="width: 100px;">
+                                </a>
+                            </td>
+                            <td class="text-center">
+                                <a href="#" @click.prevent="editarCol(col)" title="Editar" class="text-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                &nbsp;&nbsp;
+                                <a href="#" @click.prevent="eliminarCol(col.id)" title="Eliminar" class="text-danger">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </td>
@@ -430,9 +557,9 @@ onMounted(async () => {
                         <label for="nombre" class="form-label fw-bold">Nombre</label>
                         <Field type="text" name="nombre" v-model="nombre" placeholder="Nombre del docente" class="form-control" />
                     </div>
-                    <div class="col-12 col-lg-12">
+                    <div class="col-12 col-lg-12 mt-3">
                         <label for="area" class="form-label fw-bold">Área</label>
-                        <Field as="textarea" name="area" v-model="area" placeholder="Área de especialización" class="form-control"></Field>
+                        <Field as="textarea" name="area" v-model="area" placeholder="Área del docente" class="form-control" />
                     </div>
                     <div class="col-12 col-lg-12 mt-3">
                         <label for="file_foto" class="form-label fw-bold">
@@ -469,18 +596,53 @@ onMounted(async () => {
                         <label for="lab_nombre" class="form-label fw-bold">Nombre</label>
                         <Field type="text" name="lab_nombre" v-model="lab_nombre" placeholder="Nombre del laboratorio" class="form-control" />
                     </div>
-                    <div class="col-12 col-lg-12">
+                    <div class="col-12 col-lg-12 mt-3">
                         <label for="lab_descripcion" class="form-label fw-bold">Descripción</label>
-                        <Field as="textarea" name="lab_descripcion" v-model="lab_descripcion" placeholder="Descripción del laboratorio" class="form-control"></Field>
+                        <Field as="textarea" name="lab_descripcion" v-model="lab_descripcion" placeholder="Descripción del laboratorio" class="form-control" />
                     </div>
                     <div class="col-12 col-lg-12 mt-3">
                         <label for="file_lab_foto" class="form-label fw-bold">
-                            {{ lab_modal_titulo === 'Crear Laboratorio' ? 'Subir foto:' : 'Cambiar foto:' }}
+                            {{ lab_modal_titulo === 'Crear Laboratorio' ? 'Subir imagen:' : 'Cambiar imagen:' }}
                         </label>
                         <input type="file" name="foto" id="file_lab_foto" class="form-control" @change="handleLabFileChange" />
                         <div v-if="lab_imagen_preview" class="mt-3 text-center">
                             <label class="form-label fw-bold">Vista previa:</label>
-                            <img :src="lab_imagen_preview" alt="Vista previa de la foto" class="img-fluid rounded" style="max-height: 100px; display: block; margin: 0 auto;" />
+                            <img :src="lab_imagen_preview" alt="Vista previa del laboratorio" class="img-fluid rounded" style="max-height: 100px; display: block; margin: 0 auto;" />
+                        </div>
+                    </div>
+                    <div class="col-12 text-center mt-4" :style="{ display: boton }">
+                        <button class="btn btn-outline-warning" type="submit" title="Enviar">
+                            Enviar
+                        </button>
+                    </div>
+                    <div class="col-12 text-center" :style="{ display: preloader }">
+                        <img src="/img/img/load.gif" alt="Cargando" />
+                    </div>
+                </div>
+            </div>
+        </Form>
+    </div>
+</div>
+
+<div class="modalmask" v-if="col_modal_abierto">
+    <div class="modalbox rotate">
+        <a @click.prevent="cerrarColModal()" title="Cerrar" class="close">X</a>
+        <h2>{{ col_modal_titulo }}</h2>
+        <Form @submit="enviarColaborador()">
+            <div class="form-panel">
+                <div class="row container">
+                    <div class="col-12 col-lg-12">
+                        <label for="col_nombre" class="form-label fw-bold">Nombre</label>
+                        <Field type="text" name="col_nombre" v-model="col_nombre" placeholder="Nombre del colaborador" class="form-control" />
+                    </div>
+                    <div class="col-12 col-lg-12 mt-3">
+                        <label for="file_col_foto" class="form-label fw-bold">
+                            {{ col_modal_titulo === 'Crear Colaborador' ? 'Subir logo:' : 'Cambiar logo:' }}
+                        </label>
+                        <input type="file" name="foto" id="file_col_foto" class="form-control" @change="handleColFileChange" />
+                        <div v-if="col_imagen_preview" class="mt-3 text-center">
+                            <label class="form-label fw-bold">Vista previa:</label>
+                            <img :src="col_imagen_preview" alt="Vista previa del logo" class="img-fluid rounded" style="max-height: 100px; display: block; margin: 0 auto;" />
                         </div>
                     </div>
                     <div class="col-12 text-center mt-4" :style="{ display: boton }">
