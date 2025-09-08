@@ -5,14 +5,18 @@ import Fondo from '@/components/Fondo.vue';
 import Fotter from '@/components/Fotter.vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import { loginComposable } from '@/componsables/useSeguridadComposable';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { loginSchema } from '@/schemas/validacionesSchema';
+import { getPortadaById } from '@/services/portadaService';
 
 let boton = ref('block');
 let preloader = ref('none');
 
 let correo = ref('');
 let password = ref('');
+
+let portada = ref(null);
+const ID_PORTADA = 8;
 
 const {sendData} = loginComposable();
 
@@ -23,6 +27,12 @@ let enviar = () => {
     sendData({correo: correo.value, password: password.value});
 };
 
+// Edicion individual de la portada
+onMounted(async() => {
+  // Portadas
+  portada.value = await getPortadaById(8)
+});
+
 </script>
 
 <template>
@@ -32,7 +42,7 @@ let enviar = () => {
   <div class="container my-5 d-flex flex-wrap gap-4">
     <!-- Contenedor principal -->
     <div class="contenedor_blog_articulos flex-grow-1">
-      <img src="/img/blog-img/portada_blogs_2.png" alt="Imagen del blog" class="img_art" />
+      <img v-if="portada" :src="portada.imagen" alt="Imagen del blog" class="img_art" />
       <h5 class="titulos my-3">Ingresa tus datos</h5>
 
       <div class="cards_container_form">

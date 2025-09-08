@@ -5,15 +5,26 @@ import Fotter from '@/components/Fotter.vue';
 import { blogsComposable } from '@/componsables/blogsComponsable';
 import { watchEffect } from 'vue';
 import { useAuthStore } from '@/stores/authStore';
+import { getPortadaById } from '@/services/portadaService';
+import { ref, onMounted } from 'vue';
 
 const { datos, categorias, error } = blogsComposable();
 
 let store = useAuthStore();
 
+let portada = ref(null);
+const ID_PORTADA = 7;
+
 watchEffect(() => {
   if(error.value){
     window.location = "/error";
   }
+});
+
+// Edicion individual de la portada
+onMounted(async() => {
+  // Portadas
+  portada.value = await getPortadaById(7)
 });
 </script>
 
@@ -24,7 +35,7 @@ watchEffect(() => {
   <div class="container my-5 d-flex flex-wrap gap-4">
     <!-- Contenedor principal -->
     <div class="contenedor_blog_articulos flex-grow-1">
-      <img src="/img/blog-img/portada_blogs_2.png" alt="Imagen del blog" class="img_art" />
+      <img v-if="portada" :src="portada.imagen" alt="Imagen del blog" class="img_art" />
       <h5 class="titulos my-3">Todos nuestros posts</h5>
 
       <div class="cards_container3">

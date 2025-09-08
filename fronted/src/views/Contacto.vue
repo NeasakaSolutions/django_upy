@@ -4,10 +4,11 @@ import Header from '@/components/Header.vue'
 import Fondo from '@/components/Fondo.vue';
 import Fotter from '@/components/Fotter.vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { contactoSchema } from '@/schemas/validacionesSchema';
 import { useContactoComposable } from '@/componsables/useContactoComposable';
 import { useAuthStore } from '@/stores/authStore';
+import { getPortadaById } from '@/services/portadaService';
 
 let boton = ref('block');
 let preloader = ref('none');
@@ -16,6 +17,8 @@ let nombre = ref('');
 let correo = ref('');
 let telefono = ref('');
 let mensaje = ref('');
+
+let portada = ref(null);
 
 const {sendData} = useContactoComposable();
 
@@ -29,6 +32,13 @@ let enviar = () => {
 
 let store = useAuthStore();
 
+// Edicion individual de la portada
+onMounted(async() => {
+  // Portadas
+  portada.value = await getPortadaById(6)
+});
+
+const ID_PORTADA = 6;
 </script>
 
 <template>
@@ -38,7 +48,9 @@ let store = useAuthStore();
   <div class="container my-5 d-flex flex-wrap gap-4">
     <!-- Contenedor principal -->
     <div class="contenedor_blog_articulos flex-grow-1">
-      <img src="/img/blog-img/portada_blogs_2.png" alt="Imagen del blog" class="img_art" />
+      <img v-if="portada" :src="portada.imagen" alt="Imagen del blog" class="img_art" />
+      
+
       <h5 class="titulos my-3">Contacto</h5>
       <p class="subtitulos">Tablaje Catastral 7193, Carretera, Mérida - Tetiz Km 4.5, 97357 Yuc.
                         upy.edu.mx / Tel. 999 316 7153</p>
