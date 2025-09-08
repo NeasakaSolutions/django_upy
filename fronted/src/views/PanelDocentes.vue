@@ -391,6 +391,13 @@ onMounted(async () => {
                     </a>
                 </div>
             </div>
+            <div class="col-2">
+                <div class="text-right my-5">
+                    <a class="btn btn-outline-warning">
+                        <router-link :to="{ name: 'panelPortadas' }" class="nav-link">Portadas</router-link>
+                    </a>
+                </div>
+            </div>
         </div>
 
         <hr />
