@@ -58,7 +58,9 @@ let store = useAuthStore();
                             <li class="nav-item"><router-link :to = "{name: 'videos'}" class="nav-link">Videos</router-link></li>
                             <li class="nav-item"><router-link :to = "{name: 'contacto'}" class="nav-link">Contacto</router-link></li>
                             <li v-if = "store.authId==null" class="nav-item"><router-link :to = "{name: 'login'}" class="nav-link">Iniciar sesión</router-link></li>
+                            <!--
                             <li v-if = "store.authId==null" class="nav-item"><router-link :to = "{name: 'registro'}" class="nav-link">Registrarse</router-link></li>
+                            -->
                             <li v-if = "store.authId!=null" class="nav-item"><router-link :to = "{name: 'panel'}" class="nav-link">{{ 'Hola ' + store.authNombre }}</router-link></li>
                             <li v-if = "store.authId!=null" class="nav-item">
                                 <router-link @click = "store.cerrarSesion()" to = "#" class="nav-link">Cerrar sesión</router-link>
