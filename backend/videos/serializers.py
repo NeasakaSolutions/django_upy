@@ -2,9 +2,12 @@
 from django.core.files.storage import default_storage
 from rest_framework import serializers
 
+from datetime import datetime
+
 from dotenv import load_dotenv
 
 from videos.models import Video
+
 
 import os
 import re
@@ -12,7 +15,7 @@ import re
 class VideoSerializer(serializers.ModelSerializer):
     id_youtube = serializers.CharField(required=False, allow_blank=True)
     video = serializers.FileField(required=False)
-    
+    #video = serializers.CharField(required=False, allow_blank=True)
     video_url = serializers.SerializerMethodField()
     
     class Meta:
@@ -60,3 +63,45 @@ class VideoSerializer(serializers.ModelSerializer):
         raise serializers.ValidationError("El link o ID de YouTube no es válido.")
     
     
+    def create(self, validated_data):
+        # Sobreescribimos el método create para manejar la subida de archivos
+        # y renombrarlos antes de guardarlos.
+        video_file = validated_data.pop('video', None)
+
+        if video_file:
+            # Generamos un nombre único usando un timestamp
+            timestamp = datetime.now().timestamp()
+            ext = os.path.splitext(video_file.name)[1]
+            filename = f'{timestamp}{ext}'
+            
+            # Guardamos el archivo con el nuevo nombre
+            video_file_path = default_storage.save(f'videos/{filename}', video_file)
+            
+            # Asignamos el nombre del archivo al campo del modelo
+            validated_data['video'] = os.path.basename(video_file_path)
+
+        # Llamamos al método create del padre para guardar la instancia
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        # Sobreescribimos el método update para manejar la actualización del archivo
+        video_file = validated_data.pop('video', None)
+
+        if video_file:
+            # Eliminar el archivo de video anterior si existe
+            if instance.video and default_storage.exists(f'videos/{instance.video}'):
+                default_storage.delete(f'videos/{instance.video}')
+            
+            # Generar un nombre único con timestamp para el nuevo archivo
+            timestamp = datetime.now().timestamp()
+            ext = os.path.splitext(video_file.name)[1]
+            filename = f'{timestamp}{ext}'
+            
+            # Guardar el nuevo archivo con el nombre único
+            video_file_path = default_storage.save(f'videos/{filename}', video_file)
+            
+            # Asignar el nuevo nombre del archivo al campo del modelo
+            validated_data['video'] = os.path.basename(video_file_path)
+
+        # Llamar al método update del padre para guardar los datos restantes
+        return super().update(instance, validated_data)
