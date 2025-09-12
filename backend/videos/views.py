@@ -58,25 +58,28 @@ class Clase2(APIView):
     
     def delete(self, request, id):
         try:
-            # Buscar el video por su ID
             video_instance = Video.objects.get(id=id)
 
-            # Verificar si el video tiene un archivo en el campo 'video'
             if video_instance.video:
-                # Construir la ruta completa al archivo
                 file_path = f'videos/{video_instance.video}'
-                # Verificar si el archivo existe y eliminarlo del almacenamiento
+
                 if default_storage.exists(file_path):
-                    default_storage.delete(file_path)
+                    try:
+                        default_storage.delete(file_path)
+                    except Exception as e:
+                        # ⚠️ Si el archivo está en uso, ignoramos el error y solo borramos la DB
+                        print("No se pudo borrar el archivo físico:", e)
 
-            # Eliminar la instancia del modelo de la base de datos
             video_instance.delete()
-
             return JsonResponse({"mensaje": f"Video con ID {id} eliminado exitosamente."}, status=HTTPStatus.OK)
+
         except Video.DoesNotExist:
             return JsonResponse({"error": "El video no existe."}, status=HTTPStatus.NOT_FOUND)
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             return JsonResponse({"error": f"Ocurrió un error inesperado: {str(e)}"}, status=HTTPStatus.INTERNAL_SERVER_ERROR)
+
 
 
 

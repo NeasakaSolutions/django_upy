@@ -12,7 +12,6 @@ const getVideos = async () => {
   try {
     const response = await axios.get(`${API_URL}videos`);
     videos.value = response.data?.data || [];
-    console.log("Datos de videos recibidos:", videos.value);
   } catch (error) {
     console.error("Error al obtener los videos:", error);
   }
@@ -29,9 +28,9 @@ onMounted(getVideos);
     
       <div class="row">
         <div class="col d-flex justify-content-center">
-          <h4>Videos</h4>
+          <h4 style="color: aliceblue;">Videos</h4>
         </div>
-        <hr class="estilo_hr" />
+        <hr style="color: aliceblue;" />
       </div>
 
       <div v-if="videos.length > 0">

@@ -16,6 +16,7 @@ import PanelEditarFoto from '@/views/PanelEditarFoto.vue'
 import PanelEditarDocumento from '@/views/PanelEditarDocumento.vue'
 import PanelDocentes from '@/views/PanelDocentes.vue'
 import PanelPortadas from '@/views/PanelPortadas.vue'
+import PanelVideos from '@/views/PanelVideos.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -95,6 +96,14 @@ const router = createRouter({
       path: '/portadas',
       component: PanelPortadas,
       name: 'panelPortadas',
+      meta: {
+        secure: true
+      }
+    },
+    {
+      path: '/videos',
+      component: PanelVideos,
+      name: 'panelVideos',
       meta: {
         secure: true
       }
