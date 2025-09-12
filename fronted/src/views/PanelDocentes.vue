@@ -359,6 +359,12 @@ onMounted(async () => {
     cargarLaboratorios();
     cargarColaboradores();
 });
+
+// Limitar descripcion:
+const truncate = (text, length = 100) => {
+  if (!text) return '';
+  return text.length > length ? text.substring(0, length) + '...' : text;
+};
 </script>
 
 <template>
@@ -466,7 +472,7 @@ onMounted(async () => {
                         <tr v-for="(lab, index) in laboratorios" :key="index">
                             <td>{{ lab.id }}</td>
                             <td>{{ lab.nombre }}</td>
-                            <td>{{ lab.descripcion }}</td>
+                            <td>{{ truncate(lab.descripcion, 50) }}</td>
                             <td class="text-center">
                                 <a :href="lab.imagen" class="lightbox d-block" data-fancybox="lab-image-gallery">
                                     <img :src="lab.imagen" :alt="lab.nombre" style="width: 100px;">

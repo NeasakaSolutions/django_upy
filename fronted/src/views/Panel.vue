@@ -185,6 +185,13 @@ const eliminarCategoria = async (id) => {
         }
     }
 };
+
+// Limitar descripcion:
+const truncate = (text, length = 100) => {
+  if (!text) return '';
+  return text.length > length ? text.substring(0, length) + '...' : text;
+};
+
 </script>
 
 <template>
@@ -314,7 +321,7 @@ const eliminarCategoria = async (id) => {
                   <td>{{  dato.id }}</td>
                   <td>{{  dato.categoria }}</td>
                   <td>{{  dato.nombre }}</td>
-                  <td>{{  dato.descripcion }}</td>
+                  <td>{{ truncate(dato.descripcion, 50) }}</td>
                   <td class="text-center">
                     <a :href="dato.imagen" class="lightbox d-block" data-fancybox="image-gallery">
                       <img :src="dato.imagen" :alt="dato.nombre" style="width: 100px;"></img>
@@ -327,6 +334,7 @@ const eliminarCategoria = async (id) => {
                   <span v-else>No disponible</span>
                 </td>
                 <td class="text-center">
+                  &nbsp;
                   <!--AQUI VAN LOS BOTONES DE FONT AWESOME-->
                   <router-link :to="{name: 'panel_editar_foto', params:{id:dato.id}}" title="Editar foto" class="text-warning">
                     <i class="fa-solid fa-image"></i>
@@ -335,7 +343,7 @@ const eliminarCategoria = async (id) => {
                   <router-link :to="{name: 'panel_editar_documento', params:{id:dato.id}}" title="Editar documento" class="text-warning">
                     <i class="fa-solid fa-file"></i>
                   </router-link>
-                  &nbsp;&nbsp;
+                  &nbsp;&nbsp;&nbsp;&nbsp;
                   <a href="#modal2" title="Editar" @click="editar(dato)" class="text-warning">
                     <i class="fas fa-edit"></i>
                   </a>
