@@ -50,11 +50,13 @@ const router = createRouter({
       component: Contacto,
       name: 'contacto'
     },
+    /*
     {
       path: '/registro',
       component: Registro,
       name: 'registro'
     },
+    */
     {
       path: '/login',
       component: Login,
