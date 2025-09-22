@@ -36,7 +36,7 @@ class Clase1(APIView):
         
         # Que no se repitan los laboratorios
         if Laboratorio.objects.filter(nombre = request.data.get("nombre")).exists():
-            return JsonResponse({"estado": "error", "mensaje": f"El nombre {request.data["nombre"]} no esta disponible."}, 
+            return JsonResponse({"estado": "error", "mensaje": f"El nombre {request.data['nombre']} no esta disponible."}, 
                                 status = HTTPStatus.BAD_REQUEST)
         
         # Funcion fs

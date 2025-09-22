@@ -46,7 +46,7 @@ class Clase1(APIView):
                                 status = HTTPStatus.BAD_REQUEST)
         
         token = uuid.uuid4()
-        url = f"{os.getenv("BASE_URL")}api/v1/seguridad/verificacion/{token}"
+        url = f"{os.getenv('BASE_URL')}api/v1/seguridad/verificacion/{token}"
         
         try:
 

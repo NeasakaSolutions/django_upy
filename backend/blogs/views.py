@@ -128,8 +128,8 @@ class Clase2(APIView):
             return JsonResponse({"data": {"id": data.id, "nombre": data.nombre, "slug": data.slug, 
                                           "descripcion": data.descripcion, "fecha": DateFormat(data.fecha).format('d/m/Y'), 
                                           "categoria_id": data.categoria_id, "categoria": data.categoria.nombre, 
-                                          "imagen": f"{os.getenv("BASE_URL")}uploads/blogs/{data.foto}", 
-                                          "documento": f"{os.getenv("BASE_URL")}uploads/blogs/{data.documento}", 
+                                          "imagen": f"{os.getenv('BASE_URL')}uploads/blogs/{data.foto}", 
+                                          "documento": f"{os.getenv('BASE_URL')}uploads/blogs/{data.documento}", 
                                           "user_id": data.user_id, "user": data.user.first_name}}, 
                                           status = HTTPStatus.CREATED)
 

@@ -37,7 +37,7 @@ class Clase1(APIView):
 
         # Que no se repitan los titulos del blog
         if Docente.objects.filter(nombre = request.data.get("nombre")).exists():
-            return JsonResponse({"estado": "error", "mensaje": f"El nombre {request.data["nombre"]} no esta disponible."}, 
+            return JsonResponse({"estado": "error", "mensaje": f"El nombre {request.data['nombre']} no esta disponible."}, 
                                 status = HTTPStatus.BAD_REQUEST)
 
         # Funcion fs
@@ -84,7 +84,7 @@ class Clase2(APIView):
         try:
             data = Docente.objects.filter(id = id).get()
             return JsonResponse({"data": {"id": data.id, "nombre": data.nombre, "area": data.area,
-                                          "imagen": f"{os.getenv("BASE_URL")}uploads/docentes/{data.foto}" }}, 
+                                          "imagen": f"{os.getenv('BASE_URL')}uploads/docentes/{data.foto}" }}, 
                                           status = HTTPStatus.CREATED)
 
         except Docente.DoesNotExist:

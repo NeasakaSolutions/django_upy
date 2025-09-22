@@ -80,7 +80,7 @@ class Clase2(APIView):
         try:
             data = Portada.objects.filter(id = id).get()
             return JsonResponse({"data": {"id": data.id, "seccion": data.seccion, 
-                                        "imagen": f"{os.getenv("BASE_URL")}uploads/portadas/{data.foto}"}}, 
+                                        "imagen": f"{os.getenv('BASE_URL')}uploads/portadas/{data.foto}"}}, 
                                         status = HTTPStatus.CREATED)
 
         except Portada.DoesNotExist:
