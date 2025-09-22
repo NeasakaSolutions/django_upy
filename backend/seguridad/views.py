@@ -42,7 +42,7 @@ class Clase1(APIView):
                                 status = HTTPStatus.BAD_REQUEST)
         # Verificar que el correo no exista
         if User.objects.filter(email = request.data["correo"]).exists():
-            return JsonResponse({"estado": "error", "mensaje": f"El correo {request.data["correo"]} ya existe."}, 
+            return JsonResponse({"estado": "error", "mensaje": f"El correo {request.data['correo']} ya existe."}, 
                                 status = HTTPStatus.BAD_REQUEST)
         
         token = uuid.uuid4()
