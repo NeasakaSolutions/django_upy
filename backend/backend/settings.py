@@ -16,9 +16,13 @@ from dotenv import load_dotenv
 
 import os
 
-load_dotenv()
+#load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+dotenv_path = os.path.join(BASE_DIR, '.env')
+load_dotenv(dotenv_path)
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,8 +35,8 @@ SECRET_KEY = os.getenv('LOGIN_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1']
-#ALLOWED_HOSTS = ["api.dodecahack.com"]
+#ALLOWED_HOSTS = ["satou3443.pythonanywhere.com"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition

@@ -24,38 +24,38 @@ import os
 class Clase1(APIView):
 
     parser_classes = (MultiPartParser, FormParser)
-    
+
     def get(self, request):
 
         data = Video.objects.order_by('-id').all()
         datos_json = VideoSerializer(data, many = True)
         return JsonResponse({"data": datos_json.data})
-    
+
     def post(self, request):
         serializer = VideoSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             serializer.save()
             return JsonResponse({"mensaje": "Video creado exitosamente."}, status=HTTPStatus.CREATED)
-        
+
         return JsonResponse({"error": "Error al crear el video. Por favor, revisa los datos enviados."}, status=HTTPStatus.BAD_REQUEST)
-    
+
 
 
 class Clase2(APIView):
-    
+
     parser_classes = (MultiPartParser, FormParser)
 
     def put(self, request, id):
         video_instance = get_object_or_404(Video, id=id)
         serializer = VideoSerializer(video_instance, data=request.data, partial=True)
-        
+
         if serializer.is_valid():
             serializer.save()
             return JsonResponse({"mensaje": f"Video con ID {id} actualizado exitosamente."}, status=HTTPStatus.OK)
-        
+
         return JsonResponse(serializer.errors, status=HTTPStatus.BAD_REQUEST)
-    
+
     def delete(self, request, id):
         try:
             video_instance = Video.objects.get(id=id)
@@ -67,7 +67,7 @@ class Clase2(APIView):
                     try:
                         default_storage.delete(file_path)
                     except Exception as e:
-                        # ⚠️ Si el archivo está en uso, ignoramos el error y solo borramos la DB
+                        # Si el archivo está en uso, ignoramos el error y solo borramos la DB
                         print("No se pudo borrar el archivo físico:", e)
 
             video_instance.delete()
