@@ -21,21 +21,42 @@
         </div>
 
         <!-- Instagram -->
+         <div class = "col-12 col-sm-6 col-md-4 col-lg-2">
+            <a href = "https://www.instagram.com/upyucatan?igsh=ajlidDM2dmRvMmVy" target = "_blank" rel="noopener noreferrer" 
+            class = "btn btn-outline-dark color_btn_redes w-100 d-flex align-items-center justify-content-center gap-2">
+            <img class="btn_redes" src="/img/Logos/INSTAGRAM_LOGO.svg" alt="Instagram">
+            <span>Facebook</span>
+        </a>
+        </div>
+
+        <!--
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <button
                 class="btn btn-outline-dark color_btn_redes w-100 d-flex align-items-center justify-content-center gap-2">
                 <img class="btn_redes" src="/img/Logos/INSTAGRAM_LOGO.svg" alt="Instagram">
                 <span>Instagram</span>
             </button>
-        </div>
+        </div> 
+         -->
 
         <!-- Twitter -->
+        <div class = "col-12 col-sm-6 col-md-4 col-lg-2">
+            <a href = "https://x.com/UPYucatan?t=rPfIwz9lhux-ivkmKTX3cw&s=08" target = "_blank" rel="noopener noreferrer" 
+            class = "btn btn-outline-dark color_btn_redes w-100 d-flex align-items-center justify-content-center gap-2">
+            <img class="btn_redes" src="/img/Logos/icons8-x.svg" alt="X">
+            <span>X</span>
+        </a>
+        </div>
+        
+        <!-- 
         <div class="col-12 col-sm-6 col-md-4 col-lg-2">
             <button
                 class="btn btn-outline-dark color_btn_redes w-100 d-flex align-items-center justify-content-center gap-2">
-                <img class="btn_redes" src="/img/Logos/TWITTER_LOGO.svg" alt="Twitter">
+                <img class="btn_redes" src="/img/Logos/icons8-x" alt="Twitter">
                 <span>Twitter</span>
             </button>
         </div>
+        -->
+
     </div>
 </template>

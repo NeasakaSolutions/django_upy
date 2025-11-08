@@ -54,7 +54,7 @@ let store = useAuthStore();
                     <!-- Menu de navegacion -->
                     <div class="collapse navbar-collapse justify-content-end" id="menu">
                         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item"><router-link :to = "{name: 'blogs'}" class="nav-link">Blogs</router-link></li>
+                            <li class="nav-item"><router-link :to = "{name: 'blogs'}" class="nav-link">Noticias</router-link></li>
                             <li class="nav-item"><router-link :to = "{name: 'videos'}" class="nav-link">Videos</router-link></li>
                             <li class="nav-item"><router-link :to = "{name: 'contacto'}" class="nav-link">Contacto</router-link></li>
                             <li v-if = "store.authId==null" class="nav-item"><router-link :to = "{name: 'login'}" class="nav-link">Iniciar sesión</router-link></li>
