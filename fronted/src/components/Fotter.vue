@@ -16,7 +16,7 @@
             <a href = "https://www.facebook.com/upyucatanmx" target = "_blank" rel="noopener noreferrer" 
             class = "btn btn-outline-dark color_btn_redes w-100 d-flex align-items-center justify-content-center gap-2">
             <img class="btn_redes" src="/img/Logos/FACEBOOK_LOGO.svg" alt="Facebook">
-            <span>Facebook</span>
+            <span class="subtitulos">Facebook</span>
         </a>
         </div>
 
@@ -25,7 +25,7 @@
             <a href = "https://www.instagram.com/upyucatan?igsh=ajlidDM2dmRvMmVy" target = "_blank" rel="noopener noreferrer" 
             class = "btn btn-outline-dark color_btn_redes w-100 d-flex align-items-center justify-content-center gap-2">
             <img class="btn_redes" src="/img/Logos/INSTAGRAM_LOGO.svg" alt="Instagram">
-            <span>Facebook</span>
+            <span class="subtitulos">Instagram</span>
         </a>
         </div>
 
@@ -44,7 +44,7 @@
             <a href = "https://x.com/UPYucatan?t=rPfIwz9lhux-ivkmKTX3cw&s=08" target = "_blank" rel="noopener noreferrer" 
             class = "btn btn-outline-dark color_btn_redes w-100 d-flex align-items-center justify-content-center gap-2">
             <img class="btn_redes" src="/img/Logos/icons8-x.svg" alt="X">
-            <span>X</span>
+            <span class="subtitulos">X</span>
         </a>
         </div>
         

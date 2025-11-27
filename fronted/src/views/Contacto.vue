@@ -121,7 +121,7 @@ const ID_PORTADA = 6;
           <router-link :to="{ name: 'panel' }">Panel</router-link>
         </li>
         <li><router-link :to="{ name: 'blogs' }">Inicio</router-link></li>
-        <li><router-link :to="{ name: 'BlogsGeneral' }">Blogs</router-link></li>
+        <li><router-link :to="{ name: 'BlogsGeneral' }">Noticias</router-link></li>
         <li><router-link :to="{ name: 'videos' }">Videos</router-link></li>
       </ul>
     </div>

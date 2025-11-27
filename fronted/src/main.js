@@ -12,3 +12,8 @@ app.use(createPinia())
 app.use(router)
 
 app.mount('#app')
+
+// NUEVO
+router.beforeEach((to, from, next) => {
+  next();
+});

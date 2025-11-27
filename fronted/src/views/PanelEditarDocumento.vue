@@ -113,7 +113,7 @@ let enviar=async()=>{
           <router-link :to="{ name: 'blogs' }">Inicio</router-link>
         </li>
         <li class="mb-2">
-          <router-link :to="{ name: 'BlogsGeneral' }">Blogs</router-link>
+          <router-link :to="{ name: 'BlogsGeneral' }">Noticias</router-link>
         </li>
         <li>
           <router-link :to="{ name: 'contacto' }">Contacto</router-link>

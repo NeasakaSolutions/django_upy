@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('LOGIN_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = os.getenv('DEBUG') == "True"
 
 #ALLOWED_HOSTS = ["satou3443.pythonanywhere.com"]
 ALLOWED_HOSTS = ["*"]
@@ -112,6 +112,7 @@ DATABASES = {
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': os.getenv('DATABASE_SERVER'),
+        #'HOST': os.getenv('DATABASE_SERVER', '127.0.0.1'),
         'PORT': os.getenv('DATABASE_PORT'),
         'OPTIONS': {
             'autocommit': True

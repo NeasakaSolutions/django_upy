@@ -63,7 +63,7 @@ onMounted(async() => {
           <router-link :to="{ name: 'panel' }">Panel</router-link>
         </li>
         <li><router-link :to="{ name: 'blogs' }">Inicio</router-link></li>
-        <li><router-link :to="{ name: 'BlogsGeneral' }">Blogs</router-link></li>
+        <li><router-link :to="{ name: 'BlogsGeneral' }">Noticias</router-link></li>
         <li><router-link :to="{ name: 'contacto' }">Contacto</router-link></li>
       </ul>
     </div>
