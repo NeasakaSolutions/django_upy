@@ -1,16 +1,41 @@
-# 🛡️ Sitio Web de Ingeniería en Ciberseguridad — Universidad Politécnica de Yucatán
+# Sitio Web de Ingeniería en Ciberseguridad — Universidad Politécnica de Yucatán
 
-# Página segura UPY
+## Resumen rápido
 
-### Documentación
+Sitio web institucional desarrollado para la carrera de
+Ingeniería en Ciberseguridad de la Universidad Politécnica de Yucatán.
+
+- Enfocado en buenas prácticas de seguridad  
+- Backend en Django + API REST  
+- Frontend en Vue.js  
+- Proyecto académico con aplicación real
 
 ---
 
-### Descripción del Proyecto
+## Estado del proyecto
+
+- Funcional y desplegado  
+- En mejora continua  
+- Desarrollado como parte de prácticas y servicio social
+
+---
+
+## 👤 Ubaldo Narvaez Montoya / Junior Full-Stack Developer
+
+- Desarrollo completo del backend y frontend.
+- Configuración del entorno, despliegue y mantenimiento.
+
+## Descripción del Proyecto
 Este proyecto consiste en el desarrollo de un sitio web diseñado con énfasis en la seguridad, libre de vulnerabilidades conocidas y resistente frente a ataques comunes. Su objetivo principal es promover la carrera de Ingeniería en Ciberseguridad ofrecida por la Universidad Politécnica de Yucatán.
 
 Además, busca generar interés en el público general y proporcionar un espacio donde los estudiantes puedan expresar sus opiniones a través de una sección especialmente habilitada para tal fin.
 
+---
+## Alcance del proyecto
+
+- Proyecto académico con enfoque institucional.
+- No pretende cubrir todos los escenarios de producción empresarial,
+- sino aplicar buenas prácticas de desarrollo y seguridad.
 ---
 ### Tecnologías Utilizadas
 
@@ -33,6 +58,24 @@ Además, busca generar interés en el público general y proporcionar un espacio
 - **Cliente MySQL:** Herramienta de línea de comandos o cliente gráfico para administrar la base de datos MySQL.
 
 ---
+
+
+## Clona el repositorio:
+   ```bash
+    git clone https://github.com/NeasakaSolutions/Pagina_segura_UPY.git
+    cd Pagina_segura_UPY
+```
+
+##  Consideraciones de Seguridad
+
+- Uso de variables de entorno para datos sensibles
+- Protección CSRF proporcionada por Django
+- Validación de entradas en backend
+- Separación frontend / backend
+- Uso de ORM para evitar inyección SQL
+
+---
+
 ## Dependencias del Proyecto
 
 Para garantizar el correcto funcionamiento de la aplicación, es necesario contar con las siguientes dependencias, tanto a nivel de software como de librerías específicas de Python y herramientas de frontend.
@@ -224,11 +267,4 @@ src/
 ├── App.vue              # Componente raíz de la aplicación Vue.
 └── main.js              # Punto de entrada de la aplicación. Inicializa Vue y monta la app.
 ```
-
-
 ---
-
-1. Clona el repositorio:
-   ```bash
-    git clone https://github.com/NeasakaSolutions/Pagina_segura_UPY.git
-    cd Pagina_segura_UPY
